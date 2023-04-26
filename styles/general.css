@@ -1,0 +1,76 @@
+/* all the generic css that doesn't apply to anything specific in the code */
+
+body {
+  color-scheme: dark;
+  margin: auto;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* logical sizing */
+* { box-sizing: border-box; }
+/* decent font */
+* {
+  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- default HTML component styling ---- */
+/* Remove excess padding from text components */
+h1, h2, h3, h4, h5, p, button, span, label, ::marker, svg, ul, a, input, textarea, sub, th, td {
+  margin: 0;
+}
+/* remove the default styling of fieldset */
+fieldset {
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-block-start: 0;
+  padding-block-end: 0;
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+  border: none;
+  min-inline-size: min-content;
+}
+
+/* ---- variables ---- */
+:root {
+  --elv0: rgba(255,255,255, 0.05);
+  --elv1: rgba(255,255,255, 0.10);
+  --elv2: rgba(255,255,255, 0.15);
+  --elv3: rgba(255,255,255, 0.20);
+  --elv4: rgba(255,255,255, 0.25);
+}
+
+.elv0 { background-color: var(--elv0); }
+.elv1 { background-color: var(--elv1); }
+.elv2 { background-color: var(--elv2); }
+.elv3 { background-color: var(--elv3); }
+.elv4 { background-color: var(--elv4); }
+
+.gap0 { gap: 0.25rem; }
+.gap1 { gap: 0.5rem; }
+.gap2 { gap: 1rem; }
+.gap3 { gap: 1.5rem; }
+
+/* ---- utility ---- */
+/* Assign to parents for changing direction */
+.row { display: flex; flex-direction: row; }
+.col { display: flex; flex-direction: column; }
+
+/* Assign to children of row/col to center */
+.row.centerChildren > *, .row > .centered { align-self: center; margin: auto 0px; }
+.col.centerChildren > *, .col > .centered { align-self: center; margin: 0px auto; }
+
+/* Assign to empty child div to aesthetically fill space */
+.spacer { flex:1; }
+
+.panel {
+  display: flex;
+  flex-direction: column;
+
+  background-color: var(--elv1);
+
+  padding: .5rem;
+}

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Pack XBR</title>
+
+  <link rel="stylesheet" href="./styles/general.css">
+  <link rel="stylesheet" href="./styles/style.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="index.js" type="module" defer></script>
+</head>
+<body class="col centerChildren gap1">
+  <div class="spacer"></div>
+
+  <h1 id="logo">Pack XBR</h1>
+
+  <form id="packInput" class="panel gap1">
+
+    <div id="fileSelector" class="col">
+      <label for="pack">Drop Resource Pack Here</label>
+      <input id="pack" type="file" required>
+    </div>
+
+    <div class="row gap1 options">
+      <div class="panel">
+        <label for="scaleFactor">Scale Factor</label>
+        <select id="scaleFactor" required>
+          <option value="">Select</option>
+          <option value="2">2x</option>
+          <option value="3">3x</option>
+          <option value="4">4x</option>
+          <option value="5">5x</option>
+          <option value="6">6x</option>
+        </select>
+      </div>
+
+      <fieldset class="panel" required>
+        <div>
+          <input type="radio" id="autoScale" name="isAuto" value="2" checked>
+          <label for="autoScale">Auto</label>
+        </div>
+        <div>
+          <input type="radio" id="manualScale" name="isAuto" value="3" disabled>
+          <label for="manualScale">Manual</label>
+        </div>
+      </fieldset>
+    </div>
+
+    <button type="submit" id="goButton">Go</button>
+  </form>
+
+  <p>
+    Still very work in progress, don't use my raw output yet!
+  </p>
+
+  <div>
+    <span>TODO:</span>
+    <ul>
+      <li>Semi-Translucency culling</li>
+      <li>Transparency masking</li>
+      <li>Tiling Logic ('void', 'wrap', 'extend', or 'mirror' on N S E W image sides)</li>
+      <li>Relayer (underlays a nearest neighbor scale of the input, required for models)</li>
+      <li>Automatically decide what settings to use based on image location</li>
+      <li>Manual Mode</li>
+    </ul>
+  </div>
+
+  <div class="spacer"></div>
+</body>

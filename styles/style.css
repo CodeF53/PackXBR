@@ -1,0 +1,21 @@
+#packInput { padding: .5rem; }
+
+/* DropArea style file input */
+#fileSelector > label {
+  padding: 1rem;
+  width: 100%;
+  background-color: var(--elv1);
+}
+#fileSelector > input#pack::file-selector-button {
+  display: none;
+}
+
+.options > * {
+  padding: .25rem;
+  width: 50%;
+}
+
+#goButton {
+  font-size: 1.5rem;
+  width: 100%;
+}
