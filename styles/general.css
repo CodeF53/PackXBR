@@ -6,6 +6,8 @@ body {
   width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
+
+  background-color: #202020;
 }
 /* logical sizing */
 * { box-sizing: border-box; }
@@ -21,6 +23,17 @@ body {
 /* Remove excess padding from text components */
 h1, h2, h3, h4, h5, p, button, span, label, ::marker, svg, ul, a, input, textarea, sub, th, td {
   margin: 0;
+}
+/* style inputs */
+button, select {
+  background-color: var(--elv1);
+  border: unset;
+}
+:is(button, select):hover {
+  background-color: var(--elv2);
+}
+:is(button, select):active {
+  background-color: var(--elv3);
 }
 /* remove the default styling of fieldset */
 fieldset {
