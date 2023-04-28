@@ -1,4 +1,4 @@
-import scale from './scale.js';
+import process_image from './process_image.js';
 
 async function handleSubmit(event) {
   event.preventDefault();
@@ -19,9 +19,31 @@ async function handleSubmit(event) {
   let scaledImages;
   if (isAuto) {
     scaledImages = await Promise.all(images.map(async img => {
-      // TODO: decide what settings to use based on image location
-      const scaledData = await scale(img, scaleFactor);
-      return { name: img.name, data: scaledData };
+      const { name } = img;
+
+      let tile = { n: 'void', s: 'void', e: 'void', w: 'void' }
+      let relayer = false;
+      let skip = false;
+
+      if (name.includes('block/')) {
+        tile = { n: 'wrap', s: 'wrap', e: 'wrap', w: 'wrap' }
+      } else if (name.includes('painting/')) {
+        tile = { n: 'extend', s: 'extend', e: 'extend', w: 'extend' }
+      } else if (name.includes('model/') || name.includes('entity/')) {
+        relayer = true;
+      } else if (name.includes('font/') || name.includes('colormap/')) {
+        skip = true;
+      }
+
+      const scaledCanvas = await process_image({
+        pngFile: img,
+        scaleFactor: scaleFactor,
+        tile,
+        relayer,
+        skip
+      });
+      const data = scaledCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+      return { name, data };
     }));
   } else {
     // TODO: implement manual scaler
