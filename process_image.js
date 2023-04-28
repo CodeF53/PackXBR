@@ -1,7 +1,6 @@
 import {scaleImage} from "https://will-wyx.github.io/xbrz/src/xBRZ.js"
 
-// TODO: Semi-Translucency culling
-// TODO: transparency masking (split into opacity)
+// TODO: Fix Semi-Translucency culling
 /**
  * Asynchronously loads a PNG file and scales it by a factor of 4 using the `scaleCanvas` function.
  *
@@ -37,8 +36,19 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
   // merge
   canvas = hStack(imgTileEast, canvas, imgTileWest);
 
-  // apply xBRz
-  canvas = scaleCanvas(canvas.getContext('2d'), scaleFactor);
+  const shouldCull = !containsSemiTranslucency(canvas);
+
+  // split image into alpha and rgb channels
+  let [alphaCanvas, rgbCanvas] = splitRGB_A(canvas);
+
+  // upscale split images
+  alphaCanvas = scaleCanvas(alphaCanvas.getContext('2d'), scaleFactor);
+  rgbCanvas = scaleCanvas(rgbCanvas.getContext('2d'), scaleFactor);
+
+  // merge upscaled images
+  canvas = mergeRGB_A(rgbCanvas, alphaCanvas)
+
+  if (shouldCull) { cullSemiTranslucency(canvas); }
 
   // crop away tiling
   const cropped = createCanvas({ width: width * scaleFactor, height: height * scaleFactor });
@@ -51,6 +61,75 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
 
   // return finished thing encoded into a base 64 string
   return canvas;
+}
+
+function mergeRGB_A(rgbCanvas, alphaCanvas) {
+  const ctx = rgbCanvas.getContext('2d');
+  const imageData = ctx.getImageData(0, 0, rgbCanvas.width, rgbCanvas.height);
+  const alphaCtx = alphaCanvas.getContext('2d');
+  const alphaData = alphaCtx.getImageData(0, 0, alphaCanvas.width, alphaCanvas.height);
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const alpha = alphaData.data[i];
+    imageData.data[i + 3] = alpha;
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+
+  return rgbCanvas;
+}
+
+function splitRGB_A(canvas) {
+  const ctx = canvas.getContext('2d');
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  // Create a grayscale canvas of the alpha channel
+  const alphaCanvas = document.createElement('canvas');
+  alphaCanvas.width = canvas.width;
+  alphaCanvas.height = canvas.height;
+  const alphaCtx = alphaCanvas.getContext('2d');
+  const alphaData = alphaCtx.createImageData(canvas.width, canvas.height);
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const alpha = imageData.data[i + 3];
+    alphaData.data[i] = alpha;
+    alphaData.data[i + 1] = alpha;
+    alphaData.data[i + 2] = alpha;
+    alphaData.data[i + 3] = 255;
+  }
+
+  alphaCtx.putImageData(alphaData, 0, 0);
+  ctx.putImageData(imageData, 0, 0);
+
+  return [alphaCanvas, canvas];
+}
+
+function cullSemiTranslucency(canvas) {
+  const ctx = canvas.getContext('2d');
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const alpha = imageData.data[i + 3];
+    if (alpha > 0 && alpha < 255) {
+      imageData.data[i + 3] = 0;
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+}
+
+function containsSemiTranslucency(canvas) {
+  const ctx = canvas.getContext('2d');
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const alpha = imageData.data[i + 3];
+    if (alpha > 0 && alpha < 255) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 // creates an empty canvas, with width and height of given image
