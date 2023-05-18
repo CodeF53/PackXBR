@@ -18,8 +18,8 @@ async function handleSubmit(event) {
   // Scale each png file
   let scaledImages;
   if (isAuto) {
-    scaledImages = await Promise.all(images.map(async img => {
-      const { name } = img;
+    scaledImages = await Promise.all(images.map(async pngFile => {
+      const { name } = pngFile;
 
       let tile = { n: 'void', s: 'void', e: 'void', w: 'void' }
       let relayer = false;
@@ -36,7 +36,7 @@ async function handleSubmit(event) {
       }
 
       const scaledCanvas = await process_image({
-        pngFile: img,
+        pngFile,
         scaleFactor: scaleFactor,
         tile,
         relayer,

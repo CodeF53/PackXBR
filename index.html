@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="index.js" type="module" defer></script>
 </head>
-<body class="col centerChildren gap1">
+<body class="col centerChildren gap2">
   <div class="spacer"></div>
 
   <h1 id="logo">Pack XBR</h1>
@@ -50,17 +50,21 @@
     <button type="submit" id="goButton">Go</button>
   </form>
 
-  <p>
-    I leave dark pixels around edges (especially on items) due to borked Semi-Translucency culling
-    <br>
-    Please touch up my raw output before use.
-  </p>
+  <div class="col gap0">
+    <span>My output is flawed in a couple ways</span>
 
-  <div>
+    <ul>
+      <li>Dark pixels show up around edges (especially on items) due to the flawed implementation of xBRz I use</li>
+      <li>Entities and Models containing Semi-Translucent pixels (like the allay) may have holes on the corners</li>
+    </ul>
+
+    <span>Please touch up my raw output before use.</span>
+  </div>
+
+  <div class="col gap0">
     <span>TODO:</span>
     <ul>
-      <li>Fix Semi-Translucency culling</li>
-      <li>Relayer (underlays a nearest neighbor scale of the input, required for models)</li>
+      <li>Find/Make a better javascript xBRz port</li>
       <li>Optimize tiling</li>
       <li>Manual Mode</li>
       <li>Make skip texture-size configurable</li>

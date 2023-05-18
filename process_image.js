@@ -56,11 +56,44 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
   canvas = cropped.canvas;
 
   if (relayer) {
-    // TODO: underlay nearest neighbor scale of the input
+    // underlay nearest neighbor scale of the input
+    const underlayCTX = createCanvas(canvas);
+    underlayCTX.drawImage(img, 0, 0, width*scaleFactor, height*scaleFactor);
+    const underlayCanvas = underlayCTX.canvas;
+
+    underlay(canvas, underlayCanvas);
   }
 
   // return finished thing encoded into a base 64 string
   return canvas;
+}
+
+function underlay(canvas, underlayCanvas) {
+  // Get the 2D contexts of the canvases
+  const ctx = canvas.getContext('2d');
+  const underlayCtx = underlayCanvas.getContext('2d');
+
+  // Get the dimensions of the canvases
+  const { width, height } = canvas;
+
+  // Iterate over each pixel
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      // Get the RGBA values of the pixel in canvas
+      const pixelData = ctx.getImageData(x, y, 1, 1).data;
+      const alpha = pixelData[3];
+
+      // If the alpha is 0, replace the pixel with the corresponding pixel in underlayCanvas
+      if (alpha === 0) {
+        const underlayPixelData = underlayCtx.getImageData(x, y, 1, 1).data;
+        if (underlayPixelData[3] !== 0) {
+          console.log(pixelData)
+          console.log(underlayPixelData)
+        }
+        ctx.putImageData(new ImageData(underlayPixelData, 1, 1), x, y);
+      }
+    }
+  }
 }
 
 function mergeRGB_A(rgbCanvas, alphaCanvas) {
