@@ -1,5 +1,8 @@
 import process_image from './process_image.js';
 
+const packInput = document.getElementById("packInput");
+packInput.addEventListener("submit", handleSubmit);
+
 async function handleSubmit(event) {
   event.preventDefault();
 
@@ -18,6 +21,14 @@ async function handleSubmit(event) {
   // Scale each png file
   let scaledImages;
   if (isAuto) {
+    // #region create progressBar
+    const progressBar = document.createElement('labeled-progressbar');
+    progressBar.max = images.length;
+    progressBar.value = 0;
+    progressBar.name = 'progressBar';
+    packInput.appendChild(progressBar);
+    // #endregion
+
     // start scaling processing each image on asynchronous threads, waiting for all to complete
     scaledImages = await Promise.all(images.map(async pngFile => {
       const { name } = pngFile;
@@ -44,8 +55,14 @@ async function handleSubmit(event) {
       // convert the image to data that can be easily saved
       const data = scaledCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
 
+      // increment progressBar
+      progressBar.value = parseInt(progressBar.value) + 1;
+
       return { name, data };
     }));
+
+    // remove progressbar
+    // progressBar.remove()
   } else {
     // TODO: implement manual scaler
   }
@@ -65,5 +82,3 @@ async function handleSubmit(event) {
   downloadLink.download = file.name.split(".").slice(0,-1).join(".")+`_xbr_${scaleFactor}x.zip`
   downloadLink.click();
 }
-const packInput = document.getElementById("packInput");
-packInput.addEventListener("submit", handleSubmit);
