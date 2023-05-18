@@ -62,7 +62,7 @@ async function handleSubmit(event) {
     }));
 
     // remove progressbar
-    // progressBar.remove()
+    progressBar.remove()
   } else {
     // TODO: implement manual scaler
   }
