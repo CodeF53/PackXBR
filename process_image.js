@@ -2,11 +2,14 @@ import {scaleImage} from "https://will-wyx.github.io/xbrz/src/xBRZ.js"
 
 // TODO: Fix Semi-Translucency culling
 /**
- * Asynchronously loads a PNG file and scales it by a factor of 4 using the `scaleCanvas` function.
+ * Asynchronously loads a PNG file, then processes it according to the inputs
  *
  * @param {File} pngFile - The PNG file to be loaded and scaled
- * @param {number} scaleSize - The factor by which to scale the canvas, can be 2, 3, 4, 5, or 6, defaults to 4
- * @returns {string} The data URL of the scaled PNG image as a base64-encoded string, without the `data:image/png;base64,` prefix
+ * @param {number} scaleFactor - The factor by which to scale the canvas, can be 2, 3, 4, 5, or 6, defaults to 4\
+ * @param {tile} - An object containing information how each edge of the image should be treated.
+ *   Each edge can be `void`, `wrap`, `extend`, or `mirror`
+ *   example: `{ n: 'void', s: 'void', e: 'void', w: 'void' }`
+ * @returns {canvas} A canvas containing the processed image
  */
 export default async function process_image({ pngFile, scaleFactor, tile, relayer, skip }) {
   // Load the png file into an Image object
@@ -23,8 +26,11 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
   // skip scaling image if its too big, or has already been deemed skipped
   if (skip || width > 256 || height > 256) { return canvas; }
 
+  // determine if image should undergo culling
+  const shouldCull = !containsSemiTranslucency(canvas);
+
+  // #region draw surrounding tiles
   // TODO: reduce unnecessary excess tiling, (only tile out scaleFactor pixels in every direction)
-  // draw surrounding tiles
   // tile north and south
   const imgTileNorth = tileDict[tile.n](canvas, 'n');
   const imgTileSouth = tileDict[tile.s](canvas, 's');
@@ -35,9 +41,9 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
   const imgTileWest = tileDict[tile.w](canvas, 'w');
   // merge
   canvas = hStack(imgTileEast, canvas, imgTileWest);
+  // #endregion
 
-  const shouldCull = !containsSemiTranslucency(canvas);
-
+  // #region upscale
   // split image into alpha and rgb channels
   let [alphaCanvas, rgbCanvas] = splitRGB_A(canvas);
 
@@ -47,15 +53,17 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
 
   // merge upscaled images
   canvas = mergeRGB_A(rgbCanvas, alphaCanvas)
+  // #endregion
 
   if (shouldCull) { cullSemiTranslucency(canvas); }
 
-  // crop away tiling
+  // #region crop away tiling
   const cropped = createCanvas({ width: width * scaleFactor, height: height * scaleFactor });
   cropped.drawImage(canvas, -width * scaleFactor, -height * scaleFactor);
   canvas = cropped.canvas;
+  // #endregion
 
-  if (relayer) {
+  if (relayer && shouldCull) {
     // underlay nearest neighbor scale of the input
     const underlayCTX = createCanvas(canvas);
     underlayCTX.drawImage(img, 0, 0, width*scaleFactor, height*scaleFactor);
@@ -64,7 +72,6 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
     underlay(canvas, underlayCanvas);
   }
 
-  // return finished thing encoded into a base 64 string
   return canvas;
 }
 
@@ -137,6 +144,9 @@ function splitRGB_A(canvas) {
   return [alphaCanvas, canvas];
 }
 
+/**
+ * removes all pixels from canvas with 0 < alpha < 255 (anything that isn't fully solid or fully transparent)
+ */
 function cullSemiTranslucency(canvas) {
   const ctx = canvas.getContext('2d');
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -151,6 +161,9 @@ function cullSemiTranslucency(canvas) {
   ctx.putImageData(imageData, 0, 0);
 }
 
+/**
+ * returns true if canvas contains any pixels where 0 < alpha < 255 (anything that isn't fully solid or fully transparent)
+ */
 function containsSemiTranslucency(canvas) {
   const ctx = canvas.getContext('2d');
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -165,7 +178,9 @@ function containsSemiTranslucency(canvas) {
   return false;
 }
 
-// creates an empty canvas, with width and height of given image
+/**
+ * creates an empty canvas, with width and height of given image or canvas
+ */
 function createCanvas({ width, height }) {
   const canvas = document.createElement('canvas');
   canvas.width = width;
@@ -175,6 +190,9 @@ function createCanvas({ width, height }) {
   return ctx;
 }
 
+/**
+ * given any number of canvases, puts them into a row in a single canvas
+ */
 function hStack(...canvases) {
   const totalWidth = canvases.reduce((acc, canvas) => acc + canvas.width, 0);
   const maxHeight = Math.max(...canvases.map(canvas => canvas.height));
@@ -193,6 +211,9 @@ function hStack(...canvases) {
   return result;
 }
 
+/**
+ * given any number of canvases, puts them into a column in a single canvas
+ */
 function vStack(...canvases) {
   const totalHeight = canvases.reduce((acc, canvas) => acc + canvas.height, 0);
   const maxWidth = Math.max(...canvases.map(canvas => canvas.width));
@@ -266,7 +287,6 @@ const tileDict = {
   extend: (img, direction) => tileExtend(img, direction),
   mirror: (img, direction) => tileMirror(img, direction)
 }
-
 
 /**
  * Scales the provided canvas context using xBRz by the given factor.\

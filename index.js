@@ -18,9 +18,11 @@ async function handleSubmit(event) {
   // Scale each png file
   let scaledImages;
   if (isAuto) {
+    // start scaling processing each image on asynchronous threads, waiting for all to complete
     scaledImages = await Promise.all(images.map(async pngFile => {
       const { name } = pngFile;
 
+      // #region configure processing params based on image path
       let tile = { n: 'void', s: 'void', e: 'void', w: 'void' }
       let relayer = false;
       let skip = false;
@@ -34,15 +36,14 @@ async function handleSubmit(event) {
       } else if (name.includes('font/') || name.includes('colormap/')) {
         skip = true;
       }
+      // #endregion
 
-      const scaledCanvas = await process_image({
-        pngFile,
-        scaleFactor: scaleFactor,
-        tile,
-        relayer,
-        skip
-      });
+      // process the image
+      const scaledCanvas = await process_image({ pngFile, scaleFactor, tile, relayer, skip });
+
+      // convert the image to data that can be easily saved
       const data = scaledCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+
       return { name, data };
     }));
   } else {
