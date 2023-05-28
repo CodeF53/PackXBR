@@ -5,6 +5,7 @@ createApp({
   appState: 'fileInput',
 
   file: null,
+  zip: null,
   scaleFactor: 4,
   isAuto: true,
 
@@ -31,8 +32,8 @@ createApp({
     this.appState = 'scaling'; // set app state
 
     // Get all the png files in the zip
-    const zip = new JSZip();
-    const zipFile = await zip.loadAsync(this.file);
+    this.zip = new JSZip();
+    const zipFile = await this.zip.loadAsync(this.file);
     this.images = Object.values(zipFile.files).filter(file => file.name.endsWith('.png'));
 
     if (this.isAuto) {
@@ -80,14 +81,13 @@ createApp({
   },
 
   async saveZip() {
-    // add them to a new zip file
-    const zip = new JSZip();
+    // overwrite old images with processed images in inputted zip file
     this.scaledImages.forEach(({ name, data }) => {
-      zip.file(name, data, { base64: true });
+      this.zip.file(name, data, { base64: true });
     });
 
     // Generate the zip file as a blob
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
+    const zipBlob = await this.zip.generateAsync({ type: 'blob' });
 
     // Save the zip file as the (input_filename)_xbr_(scaleFactor)x.zip
     const downloadLink = document.createElement('a');
