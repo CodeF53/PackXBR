@@ -1,25 +1,35 @@
-#packInput { padding: .5rem; }
+.big {
+  font-size: 1.5rem;
+}
 
 /* DropArea style file input */
-#fileSelector > label {
-  padding: 1rem 1rem;
-  width: 100%;
-  background-color: var(--elv1);
-}
-#fileSelector > input#pack::file-selector-button {
+#packInput > #fileInput > input {
   display: none;
 }
-#fileSelector > input#pack {
-  padding-top: 3rem;
-  margin-top: -3rem;
+#packInput > #fileInput > .inputFeedback {
+  background-image: url(https://cdn.discordapp.com/attachments/713104017235902568/1101526019590070342/empty.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  width: 100%;
+  aspect-ratio: 1;
+}
+#packInput > #fileInput.hasFile > .inputFeedback {
+  background-image: url(https://cdn.discordapp.com/attachments/713104017235902568/1101526019162255440/boxed.png);
+}
+#packInput > #fileInput:is(:hover, .dragOver) > .inputFeedback {
+  background-image: url(https://cdn.discordapp.com/attachments/713104017235902568/1101527819495940096/open.png);
+}
+#packInput > .fileName {
+  font-size: .8rem;
 }
 
-.options > * {
+/* settings */
+#settings {
+  width: 15rem;
+}
+#settings > .options > * {
   padding: .25rem;
   width: 50%;
-}
-
-#goButton {
-  font-size: 1.5rem;
-  width: 100%;
 }

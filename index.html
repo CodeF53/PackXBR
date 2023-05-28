@@ -8,48 +8,81 @@
   <link rel="stylesheet" href="./styles/style.css">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="./components/LabeledProgressbar.js"></script>
-  <script src="index.js" type="module" defer></script>
+  <script type="module" src="app.js"></script>
 </head>
 <body class="col centerChildren gap2">
   <div class="spacer"></div>
 
   <h1 id="logo">Pack XBR</h1>
 
-  <form id="packInput" class="panel gap1">
-
-    <div id="fileSelector" class="col">
-      <label for="pack">Drop Resource Pack Here</label>
-      <input id="pack" type="file" required>
-    </div>
-
-    <div class="row gap1 options">
-      <div class="panel">
-        <label for="scaleFactor">Scale Factor</label>
-        <select id="scaleFactor" required>
-          <option value="">Select</option>
-          <option value="2">2x</option>
-          <option value="3">3x</option>
-          <option value="4">4x</option>
-          <option value="5">5x</option>
-          <option value="6">6x</option>
-        </select>
+  <div id="vueMount" v-scope>
+    <div id="packInput" v-if="appState === 'fileInput'" class="panel gap0">
+      <span>Drop Resource Pack Here</span>
+      <div id="fileInput" class="panel gap1"
+        :class="{'dragOver': isFileDrag, 'hasFile': file}"
+        @dragover="handleDragOver"
+        @dragleave="handleDragLeave"
+        @drop="handleFileDrop"
+        @click="$refs.packInput.click()"
+      >
+        <div class="inputFeedback"></div>
+        <input ref="packInput" type="file" required @change="handleFileInput">
       </div>
 
-      <fieldset class="panel" required>
-        <div>
-          <input type="radio" id="autoScale" name="isAuto" value="2" checked>
-          <label for="autoScale">Auto</label>
-        </div>
-        <div>
-          <input type="radio" id="manualScale" name="isAuto" value="3" disabled>
-          <label for="manualScale">Manual</label>
-        </div>
-      </fieldset>
+      <div class="row gap0">
+        <span class="fileName">{{ file?.name || "No file selected." }}</span>
+
+        <div class="spacer"></div>
+
+        <button :disabled="!file" @click="appState = 'options'">Next</button>
+      </div>
+
     </div>
 
-    <button type="submit" id="goButton">Go</button>
-  </form>
+    <div id="settings" v-else-if="appState === 'options'" class="panel gap1">
+      <div class="row gap1 options">
+        <div class="panel">
+          <label for="scaleFactor">Scale Factor</label>
+          <select id="scaleFactor" required v-model="scaleFactor">
+            <option :value="2">2x</option>
+            <option :value="3">3x</option>
+            <option :value="4">4x</option>
+            <option :value="5">5x</option>
+            <option :value="6">6x</option>
+          </select>
+        </div>
+
+        <fieldset class="panel" required>
+          <div>
+            <input type="radio" id="autoScale" v-model="isAuto" :value="true">
+            <label for="autoScale">Auto</label>
+          </div>
+          <div>
+            <input type="radio" id="manualScale" v-model="isAuto" :value="false" disabled>
+            <label for="manualScale">Manual</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <button class="big" @click="startScaling">Go</button>
+    </div>
+
+    <div id="scaling" v-else-if="appState === 'scaling'">
+      <div id="auto" v-if="isAuto" class="panel col centerChildren">
+        <progress :max="images.length-1" :value="imageIndex"></progress>
+        <label class="big">{{ imageIndex }}/{{ images.length }}</label>
+      </div>
+      <div id="manual" class="row gap1" v-else class="panel">
+        Not implemented yet, how did you even get here?
+      </div>
+    </div>
+
+    <div id="complete" v-else-if="appState === 'complete'" class="panel col centerChildren">
+      <progress max="1" value="1"></progress>
+      <label class="big">DONE!</label>
+      <button @click="reset">Back to Start</button>
+    </div>
+  </div>
 
   <div class="col gap0">
     <span>My output is flawed in a couple ways</span>
@@ -70,5 +103,5 @@
     </ul>
   </div>
 
-  <div class="spacer"></div>
+  <div class="spacer errors col"></div>
 </body>
