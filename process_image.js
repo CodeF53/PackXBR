@@ -17,52 +17,67 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
   await new Promise(resolve => img.onload = resolve);
   const { width, height } = img;
 
-  // create a new canvas and draw the scaled image to it
-  const ctx = createCanvas(img)
-  ctx.drawImage(img, 0, 0, width, height);
-  let { canvas } = ctx;
+  try {
+    // create a new canvas and draw the original image to it
+    const ctx = createCanvas(img)
+    ctx.drawImage(img, 0, 0, width, height);
+    let { canvas } = ctx;
 
-  // skip scaling image if its too big, or has already been deemed skipped
-  if (skip || width > 256 || height > 256) { return canvas; }
+    // skip images deemed skipped
+    if (skip) { return canvas; }
 
-  // determine if image should undergo culling
-  const shouldCull = !containsSemiTranslucency(canvas);
+    // determine if image should undergo culling
+    const shouldCull = !containsSemiTranslucency(canvas);
 
-  // #region draw surrounding tiles
-  // TODO: reduce unnecessary excess tiling, (only tile out scaleFactor pixels in every direction)
-  // tile north and south
-  const imgTileNorth = tileDict[tile.n](canvas, 'n');
-  const imgTileSouth = tileDict[tile.s](canvas, 's');
-  // merge
-  canvas = vStack(imgTileNorth, canvas, imgTileSouth);
-  // tile east and west
-  const imgTileEast = tileDict[tile.e](canvas, 'e');
-  const imgTileWest = tileDict[tile.w](canvas, 'w');
-  // merge
-  canvas = hStack(imgTileEast, canvas, imgTileWest);
-  // #endregion
+    // #region draw surrounding tiles
+    // TODO: reduce unnecessary excess tiling, (only tile out scaleFactor pixels in every direction)
+    // tile north and south
+    const imgTileNorth = tileDict[tile.n](canvas, 'n');
+    const imgTileSouth = tileDict[tile.s](canvas, 's');
+    // merge
+    canvas = vStack(imgTileNorth, canvas, imgTileSouth);
+    // tile east and west
+    const imgTileEast = tileDict[tile.e](canvas, 'e');
+    const imgTileWest = tileDict[tile.w](canvas, 'w');
+    // merge
+    canvas = hStack(imgTileEast, canvas, imgTileWest);
+    // #endregion
 
-  // upscale
-  canvas = await scale(canvas, scaleFactor);
+    // upscale
+    canvas = await scale(canvas, scaleFactor);
 
-  if (shouldCull) { cullSemiTranslucency(canvas); }
+    if (shouldCull) { cullSemiTranslucency(canvas); }
 
-  // #region crop away tiling
-  const cropped = createCanvas({ width: width * scaleFactor, height: height * scaleFactor });
-  cropped.drawImage(canvas, -width * scaleFactor, -height * scaleFactor);
-  canvas = cropped.canvas;
-  // #endregion
+    // #region crop away tiling
+    const cropped = createCanvas({ width: width * scaleFactor, height: height * scaleFactor });
+    cropped.drawImage(canvas, -width * scaleFactor, -height * scaleFactor);
+    canvas = cropped.canvas;
+    // #endregion
 
-  if (relayer && shouldCull) {
-    // underlay nearest neighbor scale of the input
-    const underlayCTX = createCanvas(canvas);
-    underlayCTX.drawImage(img, 0, 0, width*scaleFactor, height*scaleFactor);
-    const underlayCanvas = underlayCTX.canvas;
+    if (relayer && shouldCull) {
+      // underlay nearest neighbor scale of the input
+      const underlayCTX = createCanvas(canvas);
+      underlayCTX.drawImage(img, 0, 0, width*scaleFactor, height*scaleFactor);
+      const underlayCanvas = underlayCTX.canvas;
 
-    underlay(canvas, underlayCanvas);
+      underlay(canvas, underlayCanvas);
+    }
+
+    return canvas;
+  } catch (error) {
+    console.error(`error occurred while scaling ${pngFile.name}`);
+    console.error(error);
+
+    const errorNode = document.createElement('span');
+    errorNode.className = 'error';
+    errorNode.innerText = `error occurred while scaling ${pngFile.name}`;
+    document.body.querySelector('.errors').appendChild(errorNode);
+
+    // return the original image
+    const ctx = createCanvas(img);
+    ctx.drawImage(img, 0, 0, width, height);
+    return ctx.canvas;
   }
-
-  return canvas;
 }
 
 function underlay(canvas, underlayCanvas) {

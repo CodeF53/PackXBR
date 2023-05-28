@@ -76,6 +76,16 @@ fieldset {
 .gap3 { gap: 1.5rem; }
 
 /* ---- utility ---- */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  background-color: var(--elv1);
+
+  padding: .5rem;
+}
+
 /* Assign to parents for changing direction */
 .row { display: flex; flex-direction: row; }
 .col { display: flex; flex-direction: column; }
@@ -87,11 +97,4 @@ fieldset {
 /* Assign to empty child div to aesthetically fill space */
 .spacer { flex:1; }
 
-.panel {
-  display: flex;
-  flex-direction: column;
-
-  background-color: var(--elv1);
-
-  padding: .5rem;
-}
+.error { color: red; }
