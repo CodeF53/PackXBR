@@ -1,5 +1,6 @@
 import { createApp } from "https://unpkg.com/petite-vue?module";
 import process_image from './process_image.js';
+import { initialize as initScaler } from 'https://codef53.github.io/xbrzWA/xbrz.js';
 
 createApp({
   appState: 'fileInput',
@@ -35,6 +36,9 @@ createApp({
     this.zip = new JSZip();
     const zipFile = await this.zip.loadAsync(this.file);
     this.images = Object.values(zipFile.files).filter(file => file.name.endsWith('.png'));
+
+    // initialize xBRZ scaler's webassembly environment
+    await initScaler();
 
     if (this.isAuto) {
       // scale every image on asynchronous threads, waiting for all to complete
