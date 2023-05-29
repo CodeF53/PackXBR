@@ -66,19 +66,19 @@ createApp({
         tile = { n: 'extend', s: 'extend', e: 'extend', w: 'extend' }
       } else if (name.includes('model/') || name.includes('entity/')) {
         relayer = true;
-      } else if (name.includes('font/') || name.includes('colormap/') || name.includes('pack.png')) {
+      } else if (name.includes('font/') || name.includes('colormap/') || name.endsWith('pack.png') || name.endsWith('title/minecraft.png')) {
         skip = true;
       }
       // #endregion
 
       // process the image
-      const scaledCanvas = await process_image({ pngFile, scaleFactor: this.scaleFactor, tile, relayer, skip });
+      const processedCanvas = await process_image({ pngFile, scaleFactor: this.scaleFactor, tile, relayer, skip });
 
       // convert the image to data that can be easily saved
-      const data = scaledCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+      const data = processedCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
 
       // increment progressBar
-      this.imageIndex = this.imageIndex + 1;
+      this.imageIndex++;
 
       return { name, data };
     }));
