@@ -35,7 +35,7 @@ createApp({
     // Get all the png files in the zip
     this.zip = new JSZip();
     const zipFile = await this.zip.loadAsync(this.file);
-    this.images = Object.values(zipFile.files).filter(file => file.name.endsWith('.png'));
+    this.images = Object.values(zipFile.files).filter(file => file.name.toLowerCase().endsWith('.png'));
 
     // initialize xBRZ scaler's webassembly environment
     await initScaler();
