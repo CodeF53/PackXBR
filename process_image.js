@@ -1,4 +1,4 @@
-import {scale} from "https://codef53.github.io/xbrzWA/xbrz.js"
+import {scale} from "https://codef53.github.io/xbrzWA/xbrz.js";
 
 /**
  * Asynchronously loads a PNG file, then processes it according to the inputs

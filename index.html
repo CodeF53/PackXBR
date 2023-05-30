@@ -44,11 +44,7 @@
         <div class="panel">
           <label for="scaleFactor">Scale Factor</label>
           <select id="scaleFactor" required v-model="scaleFactor">
-            <option :value="2">2x</option>
-            <option :value="3">3x</option>
-            <option :value="4">4x</option>
-            <option :value="5">5x</option>
-            <option :value="6">6x</option>
+            <option v-for="value in [2, 3, 4, 5, 6]" :value="value" :key="value">{{ value }}x</option>
           </select>
         </div>
 
