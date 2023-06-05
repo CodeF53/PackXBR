@@ -67,3 +67,39 @@
   50% { object-position: left bottom; }
   100% { object-position: right top; }
 }
+
+
+@keyframes cycleAll {
+  0%   { content: "↑"; }
+  33%  { content: "→"; }
+  66%  { content: "↓"; }
+  100% { content: "←"; }
+}
+.cycleAll {
+  width: 1.5rem;
+}
+.cycleAll::after {
+  animation: cycleAll 4s linear infinite;
+  content: '↑';
+}
+
+@keyframes cycleLR {
+  from { content: "←"; }
+  to   { content: "→"; }
+}
+.cycleLR {
+  width: 1.5rem;
+}
+.cycleLR::after {
+  animation: cycleLR 2s linear infinite;
+  content: '←';
+}
+
+@keyframes cycleUD {
+  from { content: "↑"; }
+  to   { content: "↓"; }
+}
+.cycleUD::after {
+  animation: cycleUD 2s linear infinite;
+  content: '↑';
+}

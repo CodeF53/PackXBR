@@ -14,16 +14,20 @@ createApp({
   scaledImages: [],
   imageIndex: 0,
 
+  hotkeyHandler(e) {
+    if (this.appState === 'scaling' && !this.isAuto) {
+      this.manualHotkeyHandler(e);
+    }
+  },
+
   // #region packInput stuff
   isFileDrag: false,
   handleDragOver(e) {
-    e.preventDefault();
     this.isFileDrag = true;
   },
   handleDragLeave() { this.isFileDrag = false; },
   handleFileInput(e) { this.file = e.target.files[0] },
   handleFileDrop(e) {
-    e.preventDefault();
     this.isFileDrag = false;
     this.file = e.dataTransfer.files[0];
   },
@@ -164,6 +168,61 @@ createApp({
     this.imageIndex--;
     this.loadImages();
   },
+
+  cycleTileOption(option) {
+    this.tile[option] = this.tileOptions[(this.tileOptions.indexOf(this.tile[option])+1) % this.tileOptions.length];
+    this.updateImage();
+  },
+  cycleTilePreset(offset) {
+    const tilePresets = this.tilePresets.map(a=>a.value);
+    let presetIndex = tilePresets.indexOf(this.tile);
+    if (presetIndex === -1) { presetIndex = 0 }
+    const newPresetIndex = (presetIndex + offset + tilePresets.length) % tilePresets.length
+    this.tile = tilePresets[newPresetIndex];
+    this.updateImage();
+  },
+
+  manualHotkeyHandler(e) {
+    const { key, ctrlKey, shiftKey } = e
+
+    if (shiftKey) {
+      if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) { e.preventDefault(); }
+
+      switch (key) {
+        case 'ArrowUp':
+          return this.cycleTileOption('n')
+        case 'ArrowDown':
+          return this.cycleTileOption('s')
+        case 'ArrowLeft':
+          return this.cycleTileOption('w')
+        case 'ArrowRight':
+          return this.cycleTileOption('e')
+      }
+    } else if (ctrlKey) {
+      if (['ArrowUp', 'ArrowDown'].includes(key)) { e.preventDefault(); }
+
+      switch (key) {
+        case 'ArrowUp':
+          return this.cycleTilePreset(-1)
+        case 'ArrowDown':
+          return this.cycleTilePreset(1)
+      }
+    } else {
+      if ([' ', '.', 'ArrowLeft', 'ArrowRight'].includes(key)) { e.preventDefault(); }
+
+      switch (key) {
+        case 'ArrowLeft':
+          return this.back()
+        case 'ArrowRight':
+          return this.next()
+        case ' ':
+          return this.skip()
+        case '.':
+          this.relayer = !this.relayer;
+          return this.updateImage();
+      }
+    }
+  },
   // #endregion
 
   async saveZip() {
@@ -193,4 +252,4 @@ createApp({
     this.scaledImages = [];
     this.imageIndex = 0;
   }
-}).mount('#vueMount');
+}).mount();

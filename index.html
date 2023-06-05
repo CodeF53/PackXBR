@@ -10,7 +10,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script type="module" src="app.js"></script>
 </head>
-<body class="col centerChildren gap2">
+<body class="col centerChildren gap2" @keydown="hotkeyHandler">
   <div class="spacer"></div>
 
   <h1 id="logo">Pack XBR</h1>
@@ -20,9 +20,9 @@
       <span>Drop Resource Pack Here</span>
       <div id="fileInput" class="panel gap1"
         :class="{'dragOver': isFileDrag, 'hasFile': file}"
-        @dragover="handleDragOver"
+        @dragover.prevent="handleDragOver"
         @dragleave="handleDragLeave"
-        @drop="handleFileDrop"
+        @drop.prevent="handleFileDrop"
         @click="$refs.packInput.click()"
       >
         <div class="inputFeedback"></div>
@@ -137,6 +137,31 @@
     </div>
   </div>
 
+  <div v-if="appState === 'scaling' && !isAuto" id="keyGuide" class="col gap0 panel">
+    <h3>Shortcut Guide:</h3>
+
+    <span class="row gap0">
+      <kbd>.</kbd>
+      Toggle Relayer
+    </span>
+    <span class="row gap0">
+      <kbd>Shift</kbd> + <kbd class="cycleAll"></kbd>
+      Cycle Edge Mode
+    </span>
+    <span class="row gap0">
+      <kbd>Ctrl</kbd> + <kbd class="cycleUD"></kbd>
+      Change Preset
+    </span>
+    <span class="row gap0">
+      <kbd class="cycleLR"></kbd>
+      Previous / Next Image
+    </span>
+    <span class="row gap0">
+      <kbd>Space</kbd>
+      Skip Image
+    </span>
+  </div>
+
   <div class="col gap0">
     <span>My output is flawed in a couple ways</span>
 
@@ -151,7 +176,6 @@
     <span>TODO:</span>
     <ul>
       <li>Optimize tiling</li>
-      <li>Manual mode hotkeys</li>
     </ul>
   </div>
 
