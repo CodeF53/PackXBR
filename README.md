@@ -38,3 +38,6 @@ Heres the logic Auto mode uses:
 5. inside `font/` or `colormap/`, the image isn't scaled
 
 While this logic leads to a half-decent result, its not perfect. So, if you have the time, I highly recommend using manual.
+
+## Misc
+If you have any questions or suggestions, please contact me inside the  [the VanillaXBR discord](https://discord.com/invite/8N4xzej)!
