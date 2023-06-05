@@ -46,7 +46,6 @@ createApp({
       await this.saveZip();
       this.appState = 'complete';
     } else {
-      // TODO: implement manual scaler
       this.loadCurrentToCanvas();
       this.updateImage();
     }
@@ -108,19 +107,31 @@ createApp({
     ctx.drawImage(img, 0, 0, width, height);
   },
   async updateImage() {
-    const processed = await process_image({
+    // temporarily switch to a "scaling" graphic, as we wait for the processing to finish
+    const ctx = this.$refs.processed.getContext('2d');
+    this.$refs.processed.width = 64;
+    this.$refs.processed.height = 64;
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, 64, 64);
+    ctx.fillStyle = 'white';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('processing', 32, 32);
+
+    process_image({
       pngFile: this.images[this.imageIndex],
       scaleFactor: this.scaleFactor,
       tile: this.tile,
       relayer: this.relayer,
       skip: false
-    });
-    const { width, height } = processed;
+    }).then((processed) => {
+      const { width, height } = processed;
 
-    this.$refs.processed.width = width;
-    this.$refs.processed.height = height;
-    const ctx = this.$refs.processed.getContext('2d');
-    ctx.drawImage(processed, 0, 0, width, height);
+      this.$refs.processed.width = width;
+      this.$refs.processed.height = height;
+      ctx.drawImage(processed, 0, 0, width, height);
+    });
   },
   loadImages() {
     this.loadCurrentToCanvas();

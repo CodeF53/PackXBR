@@ -98,10 +98,6 @@ function underlay(canvas, underlayCanvas) {
       // If the alpha is 0, replace the pixel with the corresponding pixel in underlayCanvas
       if (alpha === 0) {
         const underlayPixelData = underlayCtx.getImageData(x, y, 1, 1).data;
-        if (underlayPixelData[3] !== 0) {
-          console.log(pixelData)
-          console.log(underlayPixelData)
-        }
         ctx.putImageData(new ImageData(underlayPixelData, 1, 1), x, y);
       }
     }
