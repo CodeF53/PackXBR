@@ -22,7 +22,7 @@ Normally, xBRZ rounds off the edges of textures, which can lead to holes in the 
 
 Relayer is a tool to make this doesn't happen. It basically un-rounds corners by underlaying a Nearest Neighbor upscale of the original texture beneath the result from xBRZ.
 
-!["demo" of relayer](https://cdn.discordapp.com/attachments/1082142594567516160/1115403058512416768/image.png)
+!["demo" of relayer](https://cdn.discordapp.com/attachments/1082142594567516160/1115407857114951700/image.png)
 
 ## Auto vs Manual
 You may be thinking:
