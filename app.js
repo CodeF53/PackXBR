@@ -8,7 +8,7 @@ createApp({
   file: null,
   zip: null,
   scaleFactor: 4,
-  isAuto: false,
+  isAuto: true,
 
   images: [],
   scaledImages: [],
