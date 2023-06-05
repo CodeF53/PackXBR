@@ -81,27 +81,27 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
 }
 
 function underlay(canvas, underlayCanvas) {
-  // Get the 2D contexts of the canvases
   const ctx = canvas.getContext('2d');
   const underlayCtx = underlayCanvas.getContext('2d');
 
-  // Get the dimensions of the canvases
-  const { width, height } = canvas;
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const underlayImageData = underlayCtx.getImageData(0, 0, underlayCanvas.width, underlayCanvas.height);
 
-  // Iterate over each pixel
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height; y++) {
-      // Get the RGBA values of the pixel in canvas
-      const pixelData = ctx.getImageData(x, y, 1, 1).data;
-      const alpha = pixelData[3];
+  const data = imageData.data;
+  const underlayData = underlayImageData.data;
 
-      // If the alpha is 0, replace the pixel with the corresponding pixel in underlayCanvas
-      if (alpha === 0) {
-        const underlayPixelData = underlayCtx.getImageData(x, y, 1, 1).data;
-        ctx.putImageData(new ImageData(underlayPixelData, 1, 1), x, y);
-      }
+  for (let i = 0; i < data.length; i += 4) {
+    const alpha = data[i + 3];
+
+    if (alpha === 0) {
+      data[i] = underlayData[i];
+      data[i + 1] = underlayData[i + 1];
+      data[i + 2] = underlayData[i + 2];
+      data[i + 3] = underlayData[i + 3];
     }
   }
+
+  ctx.putImageData(imageData, 0, 0);
 }
 
 /**
