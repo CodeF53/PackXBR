@@ -1,7 +1,3 @@
-.big {
-  font-size: 1.5rem;
-}
-
 /* DropArea style file input */
 #packInput > #fileInput > input {
   display: none;
@@ -32,4 +28,42 @@
 #settings > .options > * {
   padding: .25rem;
   width: 50%;
+}
+
+/* manual */
+#pathTextContainer {
+  max-width: 10rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* to make the ... be on the left, so you can see the filename */
+  direction: rtl;
+}
+#pathText {
+  direction: ltr;
+  max-width: 10rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+#scaling canvas {
+  object-fit: cover;
+
+  min-width: 10rem;
+  min-height: 10rem;
+
+  max-width: 30rem;
+  max-height: 30rem;
+
+  animation-name: interpolatePosition;
+  animation-duration: 50s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes interpolatePosition {
+  0% { object-position: right top; }
+  50% { object-position: left bottom; }
+  100% { object-position: right top; }
 }

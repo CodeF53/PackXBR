@@ -15,7 +15,7 @@
 
   <h1 id="logo">Pack XBR</h1>
 
-  <div id="vueMount" v-scope>
+  <div id="vueMount">
     <div id="packInput" v-if="appState === 'fileInput'" class="panel gap0">
       <span>Drop Resource Pack Here</span>
       <div id="fileInput" class="panel gap1"
@@ -36,7 +36,6 @@
 
         <button :disabled="!file" @click="appState = 'options'">Next</button>
       </div>
-
     </div>
 
     <div id="settings" v-else-if="appState === 'options'" class="panel gap1">
@@ -54,7 +53,7 @@
             <label for="autoScale">Auto</label>
           </div>
           <div>
-            <input type="radio" id="manualScale" v-model="isAuto" :value="false" disabled>
+            <input type="radio" id="manualScale" v-model="isAuto" :value="false">
             <label for="manualScale">Manual</label>
           </div>
         </fieldset>
@@ -68,8 +67,66 @@
         <progress :max="images.length-1" :value="imageIndex"></progress>
         <label class="big">{{ imageIndex }}/{{ images.length }}</label>
       </div>
-      <div id="manual" class="row gap1" v-else class="panel">
-        Not implemented yet, how did you even get here?
+
+      <div id="manual" v-else class="panel col gap1">
+        <div class="row gap2">
+          <div class="row gap1">
+            <label>Preset</label>
+            <select v-model="tile" @change="updateImage()">
+              <option v-for="preset in tilePresets" :value="preset.value" :key="preset.name">{{ preset.name }}</option>
+            </select>
+          </div>
+
+          <div class="row gap1">
+            <label>Relayer</label>
+            <input type="checkbox" v-model="relayer" @change="updateImage()">
+          </div>
+        </div>
+
+        <div class="row gap1">
+          <div class="col centerChildren">
+            <select v-model="tile.n" @change="updateImage()">
+              <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
+            </select>
+            <div class="row centerChildren">
+              <select v-model="tile.w" @change="updateImage()">
+                <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
+              </select>
+
+              <canvas ref="original"></canvas>
+
+              <select v-model="tile.e" @change="updateImage()">
+                <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
+              </select>
+            </div>
+            <select v-model="tile.s" @change="updateImage()">
+              <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
+            </select>
+          </div>
+
+          <div class="spacer"></div>
+
+          <div class="col centered">
+            <canvas ref="processed"></canvas>
+
+            <p id="pathTextContainer" class="small">
+              <span id="pathText">{{ images[imageIndex]?.name }}</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="row gap1">
+          <div class="row gap1">
+            <progress :max="images.length-1" :value="imageIndex"></progress>
+            <label>{{ imageIndex }}/{{ images.length }}</label>
+          </div>
+
+          <div class="spacer"></div>
+
+          <button @click="back" :disabled="imageIndex === 0">back</button>
+          <button @click="skip">skip</button>
+          <button @click="next">next</button>
+        </div>
       </div>
     </div>
 

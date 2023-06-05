@@ -40,7 +40,7 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
     const imgTileEast = tileDict[tile.e](canvas, 'e');
     const imgTileWest = tileDict[tile.w](canvas, 'w');
     // merge
-    canvas = hStack(imgTileEast, canvas, imgTileWest);
+    canvas = hStack(imgTileWest, canvas, imgTileEast);
     // #endregion
 
     // upscale

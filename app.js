@@ -8,7 +8,7 @@ createApp({
   file: null,
   zip: null,
   scaleFactor: 4,
-  isAuto: true,
+  isAuto: false,
 
   images: [],
   scaledImages: [],
@@ -30,12 +30,12 @@ createApp({
   // #endregion
 
   async startScaling() {
-    this.appState = 'scaling'; // set app state
-
     // Get all the png files in the zip
     this.zip = new JSZip();
     const zipFile = await this.zip.loadAsync(this.file);
     this.images = Object.values(zipFile.files).filter(file => file.name.toLowerCase().endsWith('.png'));
+
+    this.appState = 'scaling'; // set app state
 
     // initialize xBRZ scaler's webassembly environment
     await initScaler();
@@ -47,6 +47,8 @@ createApp({
       this.appState = 'complete';
     } else {
       // TODO: implement manual scaler
+      this.loadCurrentToCanvas();
+      this.updateImage();
     }
   },
 
@@ -83,6 +85,75 @@ createApp({
       return { name, data };
     }));
   },
+
+  // #region manual stuff
+  tileOptions: ['void', 'wrap', 'extend', 'mirror'],
+  tile: { n: 'void', s: 'void', e: 'void', w: 'void' },
+  tilePresets: [
+    { name: 'Block', value: { n: 'wrap', s: 'wrap', e: 'wrap', w: 'wrap' } },
+    { name: 'Plant', value: { n: 'void', s: 'mirror', e: 'void', w: 'void' } },
+    { name: 'Item', value: { n: 'void', s: 'void', e: 'void', w: 'void' } },
+  ],
+  relayer: false,
+
+  async loadCurrentToCanvas() {
+    const img = new Image();
+    img.src = URL.createObjectURL(new Blob([await this.images[this.imageIndex].async('uint8array')], { type: 'image/png' }));
+    await new Promise(resolve => img.onload = resolve);
+    const { width, height } = img;
+
+    this.$refs.original.width = width;
+    this.$refs.original.height = height;
+    const ctx = this.$refs.original.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+  },
+  async updateImage() {
+    const processed = await process_image({
+      pngFile: this.images[this.imageIndex],
+      scaleFactor: this.scaleFactor,
+      tile: this.tile,
+      relayer: this.relayer,
+      skip: false
+    });
+    const { width, height } = processed;
+
+    this.$refs.processed.width = width;
+    this.$refs.processed.height = height;
+    const ctx = this.$refs.processed.getContext('2d');
+    ctx.drawImage(processed, 0, 0, width, height);
+  },
+  loadImages() {
+    this.loadCurrentToCanvas();
+    this.updateImage();
+  },
+  skip() {
+    this.scaledImages.push({
+      name: this.images[this.imageIndex].name,
+      data: this.$refs.original.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+    });
+    this.imageIndex++;
+    if (this.imageIndex >= this.images.length) {
+      this.appState = 'complete';
+      this.saveZip();
+    } else { this.loadImages(); }
+  },
+  next() {
+    this.scaledImages.push({
+      name: this.images[this.imageIndex].name,
+      data: this.$refs.processed.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+    });
+    this.imageIndex++;
+    if (this.imageIndex >= this.images.length) {
+      this.appState = 'complete';
+      this.saveZip();
+    } else { this.loadImages(); }
+  },
+  back() {
+    this.scaledImages.pop();
+    this.imageIndex--;
+    this.loadImages();
+  },
+  // #endregion
 
   async saveZip() {
     // overwrite old images with processed images in inputted zip file
