@@ -1,36 +1,63 @@
-img, image, canvas {
-  image-rendering: pixelated;
-}
-
-/* all the generic css that doesn't apply to anything specific in the code */
-:root { color-scheme: dark; }
-body {
-  margin: auto;
-  width: 100vw;
-  min-height: 100vh;
-  overflow-x: hidden;
-
+:root {
+  color-scheme: dark;
   background-color: #202020;
 }
+body {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  gap: 2rem;
+}
+/* variables */
+:root {
+  --elv0: rgba(255,255,255, 0.05);
+  --elv1: rgba(255,255,255, 0.10);
+  --elv2: rgba(255,255,255, 0.15);
+  --elv3: rgba(255,255,255, 0.20);
+  --elv4: rgba(255,255,255, 0.25);
+}
+.elv0 { background-color: var(--elv0); }
+.elv1 { background-color: var(--elv1); }
+.elv2 { background-color: var(--elv2); }
+.elv3 { background-color: var(--elv3); }
+.elv4 { background-color: var(--elv4); }
 
-.big { font-size: 1.5rem; }
-.small { font-size: .75rem; }
-
-/* logical sizing */
-* { box-sizing: border-box; }
-/* decent font */
-* {
-  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-  font-weight: 700;
+/* font */
+body {
+  font-family: sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
+code { font-size: inherit; font-family: monospace; }
 
-/* ---- default HTML component styling ---- */
-h1, h2, h3, h4, h5, p, button, span, label, ::marker, svg, ul, a, input, textarea, sub, th, td {
-  margin: 0;
-}
-/* style inputs */
+/* layout utils */
+h1, h2, h3, h4, h5, p, button, span, label, ::marker, svg, ul, a, input, textarea, sub, th, td { margin: 0; }
+.row { display: flex; flex-direction: row; }
+.col { display: flex; flex-direction: column; }
+.row.centerChildren > *, .row > .centered { align-self: center; margin: auto 0px; }
+.col.centerChildren > *, .col > .centered { align-self: center; margin: 0px auto; }
+.spaceBetween { justify-content: space-between; }
+.spaceAround { justify-content: space-around; }
+.spaceEvenly { justify-content: space-evenly; }
+.gap0 { gap: 0.25rem; }
+.gap1 { gap: 0.5rem; }
+.gap2 { gap: 1rem; }
+.gap3 { gap: 1.5rem; }
+.spacer { flex:1; }
+* { box-sizing: border-box; }
+
+/* dynamic content while we wait for Vue to load */
+body:not(.vue-mounted) .hideUntilInit { display: none; }
+body.vue-mounted .showUntilInit { display: none; }
+
+/* improved default styling */
 button, select {
   background-color: var(--elv1);
   border: unset;
@@ -45,7 +72,6 @@ option {
   background: var(--elv4S);
   color: white;
 }
-/* remove the default styling of fieldset */
 fieldset {
   margin-inline-start: 0;
   margin-inline-end: 0;
@@ -56,57 +82,6 @@ fieldset {
   border: none;
   min-inline-size: min-content;
 }
-
-/* ---- variables ---- */
-:root {
-  --elv0: rgba(255,255,255, 0.05);
-  --elv1: rgba(255,255,255, 0.10);
-  --elv2: rgba(255,255,255, 0.15);
-  --elv3: rgba(255,255,255, 0.20);
-  --elv4: rgba(255,255,255, 0.25);
-
-  --elv0S: rgb(40, 40, 40);
-  --elv1S: rgb(51, 51, 51);
-  --elv2S: rgb(61, 61, 61);
-  --elv3S: rgb(71, 71, 71);
-  --elv4S: rgb(80, 80, 80);
-}
-
-.elv0 { background-color: var(--elv0); }
-.elv1 { background-color: var(--elv1); }
-.elv2 { background-color: var(--elv2); }
-.elv3 { background-color: var(--elv3); }
-.elv4 { background-color: var(--elv4); }
-
-.gap0 { gap: 0.25rem; }
-.gap1 { gap: 0.5rem; }
-.gap2 { gap: 1rem; }
-.gap3 { gap: 1.5rem; }
-
-/* ---- utility ---- */
-.panel {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  background-color: var(--elv1);
-
-  padding: .5rem;
-}
-
-/* Assign to parents for changing direction */
-.row { display: flex; flex-direction: row; }
-.col { display: flex; flex-direction: column; }
-
-/* Assign to children of row/col to center */
-.row.centerChildren > *, .row > .centered { align-self: center; margin: auto 0px; }
-.col.centerChildren > *, .col > .centered { align-self: center; margin: 0px auto; }
-
-/* Assign to empty child div to aesthetically fill space */
-.spacer { flex:1; }
-
-.error { color: red; }
-
 kbd {
   background-color: #373737;
   border-radius: 0.25rem;
@@ -124,3 +99,18 @@ kbd {
   position: relative;
   top: -1px;
 }
+
+/* misc */
+.pixel { image-rendering: pixelated; }
+.big { font-size: 1.5rem; }
+.small { font-size: .75rem; }
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  background-color: var(--elv1);
+
+  padding: .5rem;
+}
+.error { color: red; }

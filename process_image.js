@@ -1,4 +1,4 @@
-import {scale} from "https://codef53.github.io/xbrzWA/xbrz.js";
+import { scale } from 'xbrzWA';
 
 /**
  * Asynchronously loads a PNG file, then processes it according to the inputs
@@ -65,13 +65,7 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
 
     return canvas;
   } catch (error) {
-    console.error(`error occurred while scaling ${pngFile.name}`);
-    console.error(error);
-
-    const errorNode = document.createElement('span');
-    errorNode.className = 'error';
-    errorNode.innerText = `error occurred while scaling ${pngFile.name}`;
-    document.body.querySelector('.errors').appendChild(errorNode);
+    console.error(`skipping ${pngFile.name}, error occurred while scaling`, error);
 
     // return the original image
     const ctx = createCanvas(img);

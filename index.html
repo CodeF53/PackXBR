@@ -3,25 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <title>Pack XBR</title>
+  <meta name="description" content="Bulk Pixel Art Upscaler">
+  <meta name="keywords" content="xBR, xBRZ, pixel art, upscaler, bulk">
+
+  <!-- use https://generator.jspm.io/ to figure out what scopes/imports to add -->
+  <!-- then switch links to unpkg, because it works with WASM -->
+  <script type="importmap">
+    {
+      "imports": {
+        "petite-vue": "https://unpkg.com/petite-vue?module",
+        "xbrzWA": "https://codef53.github.io/xbrzWA/xbrz.js"
+      },
+      "scopes": {}
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <link rel="stylesheet" href="./styles/general.css">
   <link rel="stylesheet" href="./styles/style.css">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script type="module" src="app.js"></script>
 </head>
-<body class="col centerChildren gap2" @keydown="hotkeyHandler">
-  <div class="spacer"></div>
+<body @keydown="hotkeyHandler" @drop.prevent="handleFileDrop" @dragover.prevent @vue:mounted="mounted">
+  <header class="col centerChildren">
+    <h1 id="logo">Pack XBR</h1>
+    <h2>Bulk Pixel Art Upscaler</h2>
 
-  <h1 id="logo">Pack XBR</h1>
+    <!-- https://github.com/tholman/github-corners -->
+    <a href="https://github.com/CodeF53/WebPackXBR" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><defs><mask id="cutout-mask"><rect width="100%" height="100%" fill="white"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" class="octo-body"/></mask></defs><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z" fill="#fff" mask="url(#cutout-mask)"/></svg></a>
+    <style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  </header>
 
-  <div id="vueMount">
+  <span class="big showUntilInit">Loading...</span>
+
+  <div class="hideUntilInit">
     <div id="packInput" v-if="appState === 'fileInput'" class="panel gap0">
       <span>Drop Resource Pack Here</span>
       <div id="fileInput" class="panel gap1"
-        :class="{'dragOver': isFileDrag, 'hasFile': file}"
-        @dragover.prevent="handleDragOver"
-        @dragleave="handleDragLeave"
+        :class="{'hasFile': file}"
         @drop.prevent="handleFileDrop"
         @click="$refs.packInput.click()"
       >
@@ -29,10 +48,8 @@
         <input ref="packInput" type="file" required @change="handleFileInput">
       </div>
 
-      <div class="row gap0">
+      <div class="row gap0 spaceBetween">
         <span class="fileName">{{ file?.name || "No file selected." }}</span>
-
-        <div class="spacer"></div>
 
         <button :disabled="!file" @click="appState = 'options'">Next</button>
       </div>
@@ -83,8 +100,8 @@
           </div>
         </div>
 
-        <div class="row gap1">
-          <div class="col centerChildren">
+        <div class="row spaceBetween gap1">
+          <div id="originalContainer" class="col centerChildren">
             <select v-model="tile.n" @change="updateImage()">
               <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
             </select>
@@ -93,7 +110,7 @@
                 <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
               </select>
 
-              <canvas ref="original"></canvas>
+              <canvas class="pixel" ref="original"></canvas>
 
               <select v-model="tile.e" @change="updateImage()">
                 <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
@@ -104,22 +121,18 @@
             </select>
           </div>
 
-          <div class="spacer"></div>
+          <div id="processedContainer" class="col centered">
+            <canvas class="pixel" ref="processed"></canvas>
 
-          <div class="col centered">
-            <canvas ref="processed"></canvas>
-
-            <p id="pathTextContainer" class="small">
+            <p id="pathTextContainer" class="small centered">
               <span id="pathText">{{ images[imageIndex]?.name }}</span>
             </p>
           </div>
         </div>
 
         <div class="row gap1">
-          <div class="row gap1">
-            <progress :max="images.length" :value="imageIndex"></progress>
-            <label>{{ imageIndex }}/{{ images.length }}</label>
-          </div>
+          <progress :max="images.length" :value="imageIndex"></progress>
+          <label>{{ imageIndex }}/{{ images.length }}</label>
 
           <div class="spacer"></div>
 
@@ -163,14 +176,16 @@
   </div>
 
   <div class="col gap0">
-    <span>TODO:</span>
+    <h3>TODO:</h3>
     <ul>
       <li>Optimize tiling</li>
+      <li>Individual file input</li>
+      <li>Limit async processing to prevent crashes with large packs</li>
+      <li>Tooltips to explain manual mode terminology</li>
+      <li>Optimize images after scaling them</li>
+      <li>Vector-Based Logo</li>
+      <li>About Section</li>
+      <li>Error feedback</li>
     </ul>
   </div>
-
-  <div class="spacer errors col"></div>
-
-  <!-- https://github.com/tholman/github-corners -->
-  <a href="https://github.com/CodeF53/PackXBR" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
 </body>

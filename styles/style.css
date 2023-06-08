@@ -31,12 +31,16 @@
 }
 
 /* manual */
+#processedContainer {
+  position: relative;
+}
 #pathTextContainer {
+  position: absolute;
+  bottom: -1rem;
   max-width: 10rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-
   /* to make the ... be on the left, so you can see the filename */
   direction: rtl;
 }

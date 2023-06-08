@@ -1,8 +1,11 @@
-import { createApp } from "https://unpkg.com/petite-vue?module";
+import { createApp } from 'petite-vue';
 import process_image from './process_image.js';
-import { initialize as initScaler } from 'https://codef53.github.io/xbrzWA/xbrz.js';
+import { initialize as initScaler } from 'xbrzWA';
+import { isPNG } from './util.js';
 
 createApp({
+  mounted() { document.body.className = 'vue-mounted' },
+
   appState: 'fileInput',
 
   file: null,
@@ -21,23 +24,15 @@ createApp({
   },
 
   // #region packInput stuff
-  isFileDrag: false,
-  handleDragOver(e) {
-    this.isFileDrag = true;
-  },
-  handleDragLeave() { this.isFileDrag = false; },
   handleFileInput(e) { this.file = e.target.files[0] },
-  handleFileDrop(e) {
-    this.isFileDrag = false;
-    this.file = e.dataTransfer.files[0];
-  },
+  handleFileDrop(e) { this.file = e.dataTransfer.files[0]; },
   // #endregion
 
   async startScaling() {
     // Get all the png files in the zip
     this.zip = new JSZip();
     const zipFile = await this.zip.loadAsync(this.file);
-    this.images = Object.values(zipFile.files).filter(file => file.name.toLowerCase().endsWith('.png'));
+    this.images = Object.values(zipFile.files).filter(isPNG);
 
     this.appState = 'scaling'; // set app state
 
