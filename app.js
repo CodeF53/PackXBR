@@ -68,7 +68,7 @@ createApp({
     this.appState = 'processing'; // set app state
 
     // initialize xBRZ scaler's webassembly environment
-    await Promise.all([initScaler(), initPngEncode(), initOptimizer()])
+    await Promise.all([initScaler(), initPngEncode(), initOptimizer(), this.$nextTick()])
 
     if (this.isAuto) {
       // scale every image on asynchronous threads, waiting for all to complete
@@ -138,7 +138,7 @@ createApp({
     ctx.drawImage(img, 0, 0, width, height);
   },
   async updateImage() {
-    // temporarily switch to a "processing" graphic, as we wait for the processing to finish
+    // temporarily switch to a "scaling" graphic, as we wait for the processing to finish
     const ctx = this.$refs.processed.getContext('2d');
     this.$refs.processed.width = 64;
     this.$refs.processed.height = 64;
@@ -201,11 +201,17 @@ createApp({
     this.updateImage();
   },
   cycleTilePreset(offset) {
-    const tilePresets = this.tilePresets.map(a=>a.value);
-    let presetIndex = tilePresets.indexOf(this.tile);
-    if (presetIndex === -1) { presetIndex = 0 }
-    const newPresetIndex = (presetIndex + offset + tilePresets.length) % tilePresets.length
-    this.tile = tilePresets[newPresetIndex];
+    // find the current preset in a way that is safe because comparing objects is STUPID
+    const tilePresetValues = this.tilePresets.map(a=>a.value);
+    let presetIndex = 0;
+    tilePresetValues.forEach((preset, i) => {
+      if (JSON.stringify(preset) === JSON.stringify(this.tile)) {
+        presetIndex = i;
+      }
+    });
+    const newPresetIndex = (presetIndex + offset + tilePresetValues.length) % tilePresetValues.length
+
+    this.tile = { ...tilePresetValues[newPresetIndex] }
     this.updateImage();
   },
 
