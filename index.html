@@ -98,35 +98,35 @@
       <div id="manual" v-else class="panel col gap1">
         <div class="row gap2">
           <div class="row gap1">
-            <label>Preset</label>
-            <select v-model="tile" @change="updateImage()">
+            <label for="preset" :title="tooltips.preset">Preset</label>
+            <select id="preset" v-model="tile" @change="updateImage()" :title="tooltips.preset">
               <option v-for="preset in tilePresets" :value="preset.value" :key="preset.name">{{ preset.name }}</option>
             </select>
           </div>
 
           <div class="row gap1">
-            <label>Relayer</label>
-            <input type="checkbox" v-model="relayer" @change="updateImage()">
+            <label for="relayer" :title="tooltips.relayer">Relayer</label>
+            <input id="relayer" type="checkbox" v-model="relayer" @change="updateImage()" :title="tooltips.relayer">
           </div>
         </div>
 
         <div class="row spaceBetween gap1">
           <div id="originalContainer" class="col centerChildren">
-            <select v-model="tile.n" @change="updateImage()">
+            <select v-model="tile.n" @change="updateImage()" :title="tooltips.wrap">
               <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
             </select>
             <div class="row centerChildren">
-              <select v-model="tile.w" @change="updateImage()">
+              <select v-model="tile.w" @change="updateImage()" :title="tooltips.wrap">
                 <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
               </select>
 
               <canvas class="pixel" ref="original"></canvas>
 
-              <select v-model="tile.e" @change="updateImage()">
+              <select v-model="tile.e" @change="updateImage()" :title="tooltips.wrap">
                 <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
               </select>
             </div>
-            <select v-model="tile.s" @change="updateImage()">
+            <select v-model="tile.s" @change="updateImage()" :title="tooltips.wrap">
               <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
             </select>
           </div>
@@ -146,9 +146,9 @@
 
           <div class="spacer"></div>
 
-          <button @click="back" :disabled="imageIndex === 0">back</button>
-          <button @click="skip">skip</button>
-          <button @click="next">next</button>
+          <button @click="back" :title="tooltips.back" :disabled="imageIndex === 0">back</button>
+          <button @click="skip" :title="tooltips.skip">skip</button>
+          <button @click="next" :title="tooltips.next">next</button>
         </div>
       </div>
     </div>
@@ -189,7 +189,6 @@
     <h3>TODO:</h3>
     <ul>
       <li>Optimize tiling</li>
-      <li>Tooltips to explain manual mode terminology</li>
       <li>Vector-Based Logo</li>
       <li>About Section</li>
       <li>Error feedback</li>

@@ -9,6 +9,15 @@ import pLimit from 'p-limit'
 createApp({
   mounted() { document.body.className = 'vue-mounted' },
 
+  tooltips: {
+    preset: 'changes all 4 edge modes at once',
+    relayer: 'un-rounds corners, useful for models/entities',
+    wrap: 'changes how the processor treats whats "outside" the edge of this dropdown',
+    back: 'goes to previous image, undoing your prior settings for it',
+    next: 'goes to next image, saving result (right image)',
+    skip: 'goes to next image, saving source (left image)'
+  },
+
   appState: 'fileInput',
 
   zip: new JSZip(),
