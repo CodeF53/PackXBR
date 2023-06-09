@@ -1,49 +1,80 @@
 import { createApp } from 'petite-vue';
 import process_image from './process_image.js';
 import { initialize as initScaler } from 'xbrzWA';
-import { isPNG } from './util.js';
+import { canvasToOptimizedBuffer, isPNG, isZIP, saveBlob } from './util.js'
+import { init as initPngEncode } from '@jsquash/png'
+import { init as initOptimizer } from '@jsquash/oxipng'
+import pLimit from 'p-limit'
 
 createApp({
   mounted() { document.body.className = 'vue-mounted' },
 
   appState: 'fileInput',
 
-  file: null,
-  zip: null,
+  zip: new JSZip(),
+  selectedText: 'No files selected',
+  handlingZip: false,
+
   scaleFactor: 4,
   isAuto: true,
 
   images: [],
-  scaledImages: [],
+  processedImages: [],
   imageIndex: 0,
 
   hotkeyHandler(e) {
-    if (this.appState === 'scaling' && !this.isAuto) {
+    if (this.appState === 'processing' && !this.isAuto) {
       this.manualHotkeyHandler(e);
     }
   },
 
   // #region packInput stuff
-  handleFileInput(e) { this.file = e.target.files[0] },
-  handleFileDrop(e) { this.file = e.dataTransfer.files[0]; },
+  handleFileDrop(e) { this.handleFiles([...e.dataTransfer.files]) },
+  handleFileInput(e) { this.handleFiles([...e.target.files]) },
+  async handleFiles(files) {
+    // if there are any zip files, select the first one to process
+    let zipFile
+    for (const file of files) {
+      if (isZIP(file)) { zipFile = file; break }
+    }
+
+    // save selected images into array
+    if (zipFile) {
+      // if zip, unzip first
+      this.selectedText = zipFile.name
+      this.handlingZip = true
+
+      const zip = await this.zip.loadAsync(zipFile)
+      this.images = Object.values(zip.files).filter(isPNG)
+      // files from JSZip don't have stuff in the same places, so remap them so the rest of the code works
+      this.images = await this.images.map(img => ({
+        ...img, size: img._data.uncompressedSize,
+        arrayBuffer: async () => img.async("ArrayBuffer")
+      }))
+    } else {
+      this.images = files.filter(isPNG)
+      this.selectedText = `${this.images.length} image${this.images.length > 1? 's' : ''}`
+    }
+
+    // in case of somehow not having any images, panic
+    if (this.images.length === 0) {
+      console.error('File selected, but no images found! Did the user select a zip that doesn\'t contain any .pngs?')
+      this.reset()
+    }
+  },
   // #endregion
 
   async startScaling() {
-    // Get all the png files in the zip
-    this.zip = new JSZip();
-    const zipFile = await this.zip.loadAsync(this.file);
-    this.images = Object.values(zipFile.files).filter(isPNG);
-
-    this.appState = 'scaling'; // set app state
+    this.appState = 'processing'; // set app state
 
     // initialize xBRZ scaler's webassembly environment
-    await initScaler();
+    await Promise.all([initScaler(), initPngEncode(), initOptimizer()])
 
     if (this.isAuto) {
       // scale every image on asynchronous threads, waiting for all to complete
       await this.autoScale();
-      await this.saveZip();
       this.appState = 'complete';
+      await this.saveResult()
     } else {
       this.loadCurrentToCanvas();
       this.updateImage();
@@ -51,8 +82,9 @@ createApp({
   },
 
   async autoScale() {
+    const limit = pLimit(32)
     // process each image asynchronously, wait for all to complete
-    this.scaledImages = await Promise.all(this.images.map(async pngFile => {
+    this.processedImages = await Promise.all(this.images.map(async pngFile => await limit(async () => {
       const { name } = pngFile;
 
       // #region configure processing params based on image path
@@ -72,16 +104,16 @@ createApp({
       // #endregion
 
       // process the image
-      const processedCanvas = await process_image({ pngFile, scaleFactor: this.scaleFactor, tile, relayer, skip });
+      const processedCanvas = await process_image({ pngFile, scaleFactor: this.scaleFactor, tile, relayer, skip });;
 
-      // convert the image to data that can be easily saved
-      const data = processedCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+      // convert the image to a buffer (easily saveable), and optimize it (OptiPng)
+      const data = await canvasToOptimizedBuffer(processedCanvas);
 
       // increment progressBar
       this.imageIndex++;
 
       return { name, data };
-    }));
+    })));
   },
 
   // #region manual stuff
@@ -96,7 +128,7 @@ createApp({
 
   async loadCurrentToCanvas() {
     const img = new Image();
-    img.src = URL.createObjectURL(new Blob([await this.images[this.imageIndex].async('uint8array')], { type: 'image/png' }));
+    img.src = URL.createObjectURL(new Blob([await this.images[this.imageIndex].arrayBuffer()], { type: 'image/png' }));
     await new Promise(resolve => img.onload = resolve);
     const { width, height } = img;
 
@@ -106,7 +138,7 @@ createApp({
     ctx.drawImage(img, 0, 0, width, height);
   },
   async updateImage() {
-    // temporarily switch to a "scaling" graphic, as we wait for the processing to finish
+    // temporarily switch to a "processing" graphic, as we wait for the processing to finish
     const ctx = this.$refs.processed.getContext('2d');
     this.$refs.processed.width = 64;
     this.$refs.processed.height = 64;
@@ -136,10 +168,10 @@ createApp({
     this.loadCurrentToCanvas();
     this.updateImage();
   },
-  skip() {
-    this.scaledImages.push({
+  async skip() {
+    this.processedImages.push({
       name: this.images[this.imageIndex].name,
-      data: this.$refs.original.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+      data: await canvasToOptimizedBuffer(this.$refs.original)
     });
     this.imageIndex++;
     if (this.imageIndex >= this.images.length) {
@@ -147,10 +179,10 @@ createApp({
       this.saveZip();
     } else { this.loadImages(); }
   },
-  next() {
-    this.scaledImages.push({
+  async next() {
+    this.processedImages.push({
       name: this.images[this.imageIndex].name,
-      data: this.$refs.processed.toDataURL('image/png').replace(/^data:image\/png;base64,/, '')
+      data: await canvasToOptimizedBuffer(this.$refs.processed)
     });
     this.imageIndex++;
     if (this.imageIndex >= this.images.length) {
@@ -159,7 +191,7 @@ createApp({
     } else { this.loadImages(); }
   },
   back() {
-    this.scaledImages.pop();
+    this.processedImages.pop();
     this.imageIndex--;
     this.loadImages();
   },
@@ -220,31 +252,40 @@ createApp({
   },
   // #endregion
 
-  async saveZip() {
-    // overwrite old images with processed images in inputted zip file
-    this.scaledImages.forEach(({ name, data }) => {
-      this.zip.file(name, data, { base64: true });
-    });
+  async saveResult() {
+    // if we have a single image, we can save it directly, no zip
+    if (!this.handlingZip && this.processedImages.length === 1) {
+      // encode png to blob
+      const blob = new Blob([this.processedImages[0].data], { type: 'image/png' })
+      // save it
+      saveBlob(blob, this.processedImages[0].name)
+    } else {
+      // add every image to a zip file
+      this.processedImages.forEach(({ name, data }) => {
+        this.zip.file(name, data)
+      })
+      // encode the zip as a blob
+      const zipBlob = await this.zip.generateAsync({ type: 'blob' })
 
-    // Generate the zip file as a blob
-    const zipBlob = await this.zip.generateAsync({ type: 'blob' });
-
-    // Save the zip file as the (input_filename)_xbr_(scaleFactor)x.zip
-    const downloadLink = document.createElement('a');
-    downloadLink.href = window.URL.createObjectURL(zipBlob);
-    downloadLink.download = this.file.name.split(".").slice(0,-1).join(".")+`_xbr_${this.scaleFactor}x.zip`
-    downloadLink.click();
+      let outputName = `xbr_${this.scaleFactor}x.zip`
+      if (this.handlingZip) { outputName = `${this.selectedText.split(".").slice(0,-1).join(".")}_${outputName}`}
+      // save it retaining original zip filename if input was a zip
+      saveBlob(zipBlob, outputName)
+    }
   },
 
   reset() {
-    this.appState = 'fileInput';
+    this.appState = 'fileInput'
 
-    this.file = null;
-    this.scaleFactor = 4;
-    this.isAuto = true;
+    this.zip = new JSZip()
+    this.selectedText = 'No files selected'
+    this.handlingZip = false
 
-    this.images = [];
-    this.scaledImages = [];
-    this.imageIndex = 0;
+    this.scaleFactor = 4
+    this.isAuto = true
+
+    this.images = []
+    this.processedImages = []
+    this.imageIndex = 0
   }
 }).mount();

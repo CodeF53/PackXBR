@@ -12,9 +12,18 @@
     {
       "imports": {
         "petite-vue": "https://unpkg.com/petite-vue?module",
-        "xbrzWA": "https://codef53.github.io/xbrzWA/xbrz.js"
+        "xbrzWA": "https://codef53.github.io/xbrzWA/xbrz.js",
+        "@jsquash/png": "https://unpkg.com/@jsquash/png@2.0.0/encode.js",
+        "@jsquash/oxipng": "https://unpkg.com/@jsquash/oxipng@1.0.0/optimise.js",
+        "p-limit": "https://unpkg.com/p-limit@4.0.0/index.js"
+
       },
-      "scopes": {}
+      "scopes": {
+        "https://unpkg.com/": {
+          "wasm-feature-detect": "https://unpkg.com/wasm-feature-detect@1.5.1/dist/esm/index.js",
+          "yocto-queue": "https://unpkg.com/yocto-queue@1.0.0/index.js"
+        }
+      }
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -40,18 +49,18 @@
     <div id="packInput" v-if="appState === 'fileInput'" class="panel gap0">
       <span>Drop Resource Pack Here</span>
       <div id="fileInput" class="panel gap1"
-        :class="{'hasFile': file}"
+        :class="{'hasFile': images.length > 1}"
         @drop.prevent="handleFileDrop"
         @click="$refs.packInput.click()"
       >
         <div class="inputFeedback"></div>
-        <input ref="packInput" type="file" required @change="handleFileInput">
+        <input ref="packInput" multiple accept="image/png, .zip" type="file" required @change="handleFileInput">
       </div>
 
       <div class="row gap0 spaceBetween">
-        <span class="fileName">{{ file?.name || "No file selected." }}</span>
+        <span class="fileName">{{ selectedText }}</span>
 
-        <button :disabled="!file" @click="appState = 'options'">Next</button>
+        <button :disabled="images.length === 0" @click="appState = 'options'">Next</button>
       </div>
     </div>
 
@@ -79,8 +88,9 @@
       <button class="big" @click="startScaling">Go</button>
     </div>
 
-    <div id="scaling" v-else-if="appState === 'scaling'">
+    <div id="processing" v-else-if="appState === 'processing'">
       <div id="auto" v-if="isAuto" class="panel col centerChildren">
+        <h2>Processing Images</h2>
         <progress :max="images.length-1" :value="imageIndex"></progress>
         <label class="big">{{ imageIndex }}/{{ images.length }}</label>
       </div>
@@ -150,7 +160,7 @@
     </div>
   </div>
 
-  <div v-if="appState === 'scaling' && !isAuto" id="keyGuide" class="col gap0 panel">
+  <div v-if="appState === 'processing' && !isAuto" id="keyGuide" class="col gap0 panel hideUntilInit">
     <h3>Shortcut Guide:</h3>
 
     <span class="row gap0">
@@ -179,10 +189,7 @@
     <h3>TODO:</h3>
     <ul>
       <li>Optimize tiling</li>
-      <li>Individual file input</li>
-      <li>Limit async processing to prevent crashes with large packs</li>
       <li>Tooltips to explain manual mode terminology</li>
-      <li>Optimize images after scaling them</li>
       <li>Vector-Based Logo</li>
       <li>About Section</li>
       <li>Error feedback</li>

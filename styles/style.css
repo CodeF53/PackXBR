@@ -52,7 +52,7 @@
   text-overflow: ellipsis;
 }
 
-#scaling canvas {
+#processing canvas {
   object-fit: cover;
 
   min-width: 10rem;

@@ -13,7 +13,7 @@ import { scale } from 'xbrzWA';
 export default async function process_image({ pngFile, scaleFactor, tile, relayer, skip }) {
   // Load the png file into an Image object
   const img = new Image();
-  img.src = URL.createObjectURL(new Blob([await pngFile.async('uint8array')], { type: 'image/png' }));
+  img.src = URL.createObjectURL(new Blob([await pngFile.arrayBuffer()], { type: 'image/png' }));
   await new Promise(resolve => img.onload = resolve);
   const { width, height } = img;
 
@@ -65,7 +65,7 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
 
     return canvas;
   } catch (error) {
-    console.error(`skipping ${pngFile.name}, error occurred while scaling`, error);
+    console.error(`skipping ${pngFile.name}, error occurred while processing`, error);
 
     // return the original image
     const ctx = createCanvas(img);
