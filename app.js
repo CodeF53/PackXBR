@@ -200,6 +200,7 @@ createApp({
     } else { this.loadImages(); }
   },
   back() {
+    if (this.imageIndex === 0) { return }
     this.processedImages.pop();
     this.imageIndex--;
     this.loadImages();
