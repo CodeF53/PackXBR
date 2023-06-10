@@ -15,7 +15,8 @@
         "xbrzWA": "https://codef53.github.io/xbrzWA/xbrz.js",
         "@jsquash/png": "https://unpkg.com/@jsquash/png@2.0.0/encode.js",
         "@jsquash/oxipng": "https://unpkg.com/@jsquash/oxipng@1.0.0/optimise.js",
-        "p-limit": "https://unpkg.com/p-limit@4.0.0/index.js"
+        "p-limit": "https://unpkg.com/p-limit@4.0.0/index.js",
+        "viewerjs": "https://unpkg.com/viewerjs@1.11.3/dist/viewer.esm.js"
 
       },
       "scopes": {
@@ -26,6 +27,7 @@
       }
     }
   </script>
+  <link rel="stylesheet" href="https://unpkg.com/viewerjs@1.11.3/dist/viewer.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" integrity="sha512-XMVd28F1oH/O71fzwBnV7HucLxVwtxf26XV8P4wPk26EDxuGZ91N8bsOttmnomcCD3CS5ZMRL50H0GgOHvegtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <link rel="stylesheet" href="./styles/general.css">
@@ -120,7 +122,7 @@
                 <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
               </select>
 
-              <canvas class="pixel" ref="original"></canvas>
+              <canvas class="pixel" ref="original" @click="viewCanvas"></canvas>
 
               <select v-model="tile.e" @change="updateImage()" :title="tooltips.wrap">
                 <option v-for="value in tileOptions" :value="value" :key="value">{{ value }}</option>
@@ -132,7 +134,7 @@
           </div>
 
           <div id="processedContainer" class="col centered">
-            <canvas class="pixel" ref="processed"></canvas>
+            <canvas class="pixel" ref="processed" @click="viewCanvas"></canvas>
 
             <p id="pathTextContainer" class="small centered">
               <span id="pathText">{{ images[imageIndex]?.name }}</span>
@@ -183,6 +185,10 @@
       <kbd>Space</kbd>
       Skip Image
     </span>
+    <span class="row gap0">
+      <kbd>P</kbd>
+      Preview Result
+    </span>
   </div>
 
   <div class="col gap0">
@@ -194,4 +200,6 @@
       <li>Error feedback</li>
     </ul>
   </div>
+
+  <div id="garbageHole"></div>
 </body>

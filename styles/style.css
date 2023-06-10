@@ -107,3 +107,12 @@
   animation: cycleUD 2s linear infinite;
   content: '↑';
 }
+
+body > #garbageHole {
+  /* make not effect positioning of remaining elements in body */
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+/* viewerImg is only in the dom so the viewer works */
+body > #garbageHole > #viewerImg { display: none; }

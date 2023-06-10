@@ -5,6 +5,25 @@ import { canvasToOptimizedBuffer, isPNG, isZIP, saveBlob } from './util.js'
 import { init as initPngEncode } from '@jsquash/png'
 import { init as initOptimizer } from '@jsquash/oxipng'
 import pLimit from 'p-limit'
+import Viewer from 'viewerjs'
+
+// a place to put stuff you don't have a place for, because they don't really belong anywhere
+const garbageHole = document.querySelector('body > #garbageHole')
+
+// init viewer
+const viewerImg = document.createElement('img')
+viewerImg.id = 'viewerImg'
+const viewer = new Viewer(viewerImg, {
+  navbar: false,
+  title: false,
+  container: garbageHole,
+  toolbar: {
+    zoomIn: true, zoomOut: true, oneToOne: true, reset: true,
+    rotateLeft: true, rotateRight: true, flipHorizontal: true, flipVertical: true,
+    prev: false, play: false, next: false,
+  },
+})
+garbageHole.appendChild(viewerImg) // put the image in the garbageHole so the viewer will work
 
 createApp({
   mounted() { document.body.className = 'vue-mounted' },
@@ -41,6 +60,8 @@ createApp({
   handleFileDrop(e) { this.handleFiles([...e.dataTransfer.files]) },
   handleFileInput(e) { this.handleFiles([...e.target.files]) },
   async handleFiles(files) {
+    this.images = [];
+
     // if there are any zip files, select the first one to process
     let zipFile
     for (const file of files) {
@@ -226,6 +247,9 @@ createApp({
   },
 
   manualHotkeyHandler(e) {
+    // disable hotkeys while viewer is open
+    if (viewer.fulled) { return }
+
     const { key, ctrlKey, shiftKey } = e
 
     if (shiftKey) {
@@ -251,7 +275,7 @@ createApp({
           return this.cycleTilePreset(1)
       }
     } else {
-      if ([' ', '.', 'ArrowLeft', 'ArrowRight'].includes(key)) { e.preventDefault(); }
+      if ([' ', '.', 'ArrowLeft', 'ArrowRight', 'p'].includes(key)) { e.preventDefault(); }
 
       switch (key) {
         case 'ArrowLeft':
@@ -263,8 +287,18 @@ createApp({
         case '.':
           this.relayer = !this.relayer;
           return this.updateImage();
+        case 'p':
+          return this.viewCanvas({ target: this.$refs.processed })
       }
     }
+  },
+
+  // given a click event, shows the canvas clicked on the viewer
+  viewCanvas(e) {
+    const canvas = e.target
+    viewerImg.src = canvas.toDataURL()
+    viewer.show()
+    viewer.update()
   },
   // #endregion
 

@@ -101,7 +101,7 @@ kbd {
 }
 
 /* misc */
-.pixel { image-rendering: pixelated; }
+.pixel, .viewer-canvas > img { image-rendering: pixelated; }
 .big { font-size: 1.5rem; }
 .small { font-size: .75rem; }
 .panel {
