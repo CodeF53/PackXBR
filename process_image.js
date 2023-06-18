@@ -10,7 +10,7 @@ import { scale } from 'xbrzWA';
  *   example: `{ n: 'void', s: 'void', e: 'void', w: 'void' }`
  * @returns {canvas} A canvas containing the processed image
  */
-export default async function process_image({ pngFile, scaleFactor, tile, relayer, skip }) {
+export default async function process_image({ pngFile, scaleFactor, tile, relayer, semiTranslucencyCulling = true, skip }) {
   // Load the png file into an Image object
   const img = new Image();
   img.src = URL.createObjectURL(new Blob([await pngFile.arrayBuffer()], { type: 'image/png' }));
@@ -27,7 +27,8 @@ export default async function process_image({ pngFile, scaleFactor, tile, relaye
     if (skip) { return canvas; }
 
     // determine if image should undergo culling
-    const shouldCull = !containsSemiTranslucency(canvas);
+    let shouldCull = semiTranslucencyCulling;
+    if (semiTranslucencyCulling) { shouldCull = !containsSemiTranslucency(canvas); }
 
     // #region draw surrounding tiles
     // TODO: reduce unnecessary excess tiling, (only tile out scaleFactor pixels in every direction)

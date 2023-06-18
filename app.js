@@ -34,7 +34,8 @@ createApp({
     wrap: 'changes how the processor treats whats "outside" the edge of this dropdown',
     back: 'goes to previous image, undoing your prior settings for it',
     next: 'goes to next image, saving result (right image)',
-    skip: 'goes to next image, saving source (left image)'
+    skip: 'goes to next image, saving source (left image)',
+    semiTranslucencyCulling: 'remove pixels that are only partially translucent, (Highly Recommended)',
   },
 
   appState: 'fileInput',
@@ -155,6 +156,7 @@ createApp({
     { name: 'Item', value: { n: 'void', s: 'void', e: 'void', w: 'void' } },
   ],
   relayer: false,
+  semiTranslucencyCulling: true,
 
   async loadCurrentToCanvas() {
     const img = new Image();
@@ -185,7 +187,8 @@ createApp({
       scaleFactor: this.scaleFactor,
       tile: this.tile,
       relayer: this.relayer,
-      skip: false
+      semiTranslucencyCulling: this.semiTranslucencyCulling,
+      skip: false,
     }).then((processed) => {
       const { width, height } = processed;
 

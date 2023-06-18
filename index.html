@@ -110,6 +110,11 @@
             <label for="relayer" :title="tooltips.relayer">Relayer</label>
             <input id="relayer" type="checkbox" v-model="relayer" @change="updateImage()" :title="tooltips.relayer">
           </div>
+
+          <div class="row gap1">
+            <label for="semiTranslucencyCulling" :title="tooltips.semiTranslucencyCulling">Semi-Translucency Culling</label>
+            <input id="semiTranslucencyCulling" type="checkbox" v-model="semiTranslucencyCulling" @change="updateImage()" :title="tooltips.semiTranslucencyCulling">
+          </div>
         </div>
 
         <div class="row spaceBetween gap1">
