@@ -209,7 +209,7 @@ createApp({
     this.imageIndex++;
     if (this.imageIndex >= this.images.length) {
       this.appState = 'complete';
-      this.saveZip();
+      this.saveResult();
     } else { this.loadImages(); }
   },
   async next() {
@@ -220,7 +220,7 @@ createApp({
     this.imageIndex++;
     if (this.imageIndex >= this.images.length) {
       this.appState = 'complete';
-      this.saveZip();
+      this.saveResult();
     } else { this.loadImages(); }
   },
   back() {
