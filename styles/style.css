@@ -2,20 +2,32 @@
 #packInput > #fileInput > input {
   display: none;
 }
-#packInput > #fileInput > .inputFeedback {
-  background-image: url(https://cdn.discordapp.com/attachments/713104017235902568/1101526019590070342/empty.png);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-
+#fileInput {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20rem;
+  height: 20rem;
+}
+#fileInput > svg {
   width: 100%;
-  aspect-ratio: 1;
+  height: 100%;
 }
-#packInput > #fileInput.hasFile > .inputFeedback {
-  background-image: url(https://cdn.discordapp.com/attachments/713104017235902568/1101526019162255440/boxed.png);
+#fileInput #box {
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
 }
-#packInput > #fileInput:is(:hover, .dragOver) > .inputFeedback {
-  background-image: url(https://cdn.discordapp.com/attachments/713104017235902568/1101527819495940096/open.png);
+#fileInput.hasFile #box {
+  opacity: 1;
+}
+#fileInput :is(#red-upper, #dark, #red-lower) {
+  transition: translate 0.5s ease-in-out;
+}
+#fileInput:hover:not(.hasFile) :is(#red-upper, #red-lower) {
+  translate: 1rem 0px;
+}
+#fileInput:hover:not(.hasFile) #dark {
+  translate: -1rem 0px;
 }
 #packInput > .fileName {
   font-size: .8rem;
