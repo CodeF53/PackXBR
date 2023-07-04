@@ -39,7 +39,7 @@
 
   <script type="module" src="app.js"></script>
 </head>
-<body @keydown="hotkeyHandler" @drop.prevent="handleFileDrop" @dragover.prevent @vue:mounted="mounted">
+<body @keydown="hotkeyHandler" @drop.prevent="handleFileDrop" @dragover.prevent @vue:mounted="mounted" @paste="handleFilePaste">
   <header class="col centerChildren">
     <h1 id="logo">Pack XBR</h1>
     <h2>Bulk Pixel Art Upscaler</h2>

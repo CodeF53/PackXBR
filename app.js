@@ -58,9 +58,14 @@ createApp({
   },
 
   // #region packInput stuff
+  async handleFilePaste(e) {
+    const files = [...e.clipboardData.files]
+    if (files.length > 0) this.handleFiles([...e.clipboardData.files])
+  },
   handleFileDrop(e) { this.handleFiles([...e.dataTransfer.files]) },
   handleFileInput(e) { this.handleFiles([...e.target.files]) },
   async handleFiles(files) {
+    if (this.appState !== 'fileInput') return
     this.images = [];
 
     // if there are any zip files, select the first one to process
