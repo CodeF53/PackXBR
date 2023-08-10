@@ -13,11 +13,14 @@
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
     "@nuxt/devtools": "latest",
+    "@nuxt/types": "^2.17.1",
+    "@nuxt/typescript-build": "^3.0.1",
     "@types/node": "^18.16.19",
     "eslint": "^8.45.0",
     "lint-staged": "^13.2.3",
     "nuxt": "^3.6.3",
-    "simple-git-hooks": "^2.8.1"
+    "simple-git-hooks": "^2.8.1",
+    "typescript": "^4.9.5"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm lint-staged"
@@ -26,6 +29,7 @@
     "*": "eslint --fix"
   },
   "dependencies": {
+    "@jsquash/png": "^2.1.2",
     "jszip": "^3.10.1",
     "sass": "^1.63.6"
   }

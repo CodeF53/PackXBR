@@ -40,9 +40,9 @@
             <li>
               Image processor
               <ul>
+                <li>Auto</li>
                 <li>Manual</li>
-                <li>Image Processor</li>
-                <li>Optimization</li>
+                <li>Relayer</li>
                 <li>Single-file save</li>
               </ul>
             </li>
