@@ -1,16 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import JSZip from 'jszip'
+import pLimit from 'p-limit'
+import { decode as decodePNG, encode as encodePNG } from '@jsquash/png'
+
+import initPNG from '@jsquash/png/codec'
+import { initialize as initXBRZ } from '~/utils/image/xbrz'
+
+import { processAuto } from '~/utils/image/process'
 
 const props = defineProps(['files', 'options'])
 const emit = defineEmits(['next'])
 
 const stage = ref('')
-const progress = ref(0)
-const progressMax = ref(0)
+const progress: Ref<number | null> = ref(0)
+const progressMax: Ref<number | null> = ref(0)
 
-const nonImages = ref([])
-const images = ref([])
-const processedImages = ref([])
+const nonImages: Ref<Array<DumbFile>> = ref([])
+const images: Ref<Array<Image>> = ref([])
+const processedImages: Ref<Array<Image>> = ref([])
+const optimizedImages: Ref<Array<DumbFile>> = ref([])
+
+const limit = pLimit(8)
 
 async function loadFiles() {
   // update display
@@ -18,16 +28,17 @@ async function loadFiles() {
   progress.value = 0
   progressMax.value = props.files.length
 
-  // load every file's arrayBuffer asynchronously
-  const files = await Promise.all(props.files.map(async (file) => {
-    const data = await file.arrayBuffer()
-    progress.value++
-    return { name: file.name, data }
-  }))
+  await initPNG()
 
-  // split loaded files into images and nonImages
-  images.value = files.filter(isPNG)
-  nonImages.value = files.filter(file => !isPNG(file))
+  // load every file's arrayBuffer asynchronously
+  await Promise.all(props.files.map(async (file: File) => await limit(async () => {
+    const data = await file.arrayBuffer()
+    if (isPNG(file))
+      images.value.push({ name: file.name, data: await decodePNG(data) })
+    else
+      nonImages.value.push({ name: file.name, data })
+    progress.value++
+  })))
 
   // move to next step
   processImages()
@@ -37,17 +48,17 @@ async function processImages() {
   // update display
   stage.value = 'Processing Images'
   progress.value = 0
-  progressMax.value = images.length
+  progressMax.value = images.value.length
+  getCurrentInstance()?.proxy?.$forceUpdate()
+  await Promise.all([initXBRZ(), nextTick()])
 
   // (if auto) process all images
   if (props.options.auto) {
-    processedImages.value = await Promise.all(images.value.map(async (image) => {
-      // TODO: process image
-
+    processedImages.value = await Promise.all(images.value.map(async image => await limit(async () => {
+      const imageData = await processAuto(image, props.options.scale)
       progress.value++
-
-      return image
-    }))
+      return { name: image.name, data: imageData }
+    })))
 
     // move to next step
     optimizeImages()
@@ -59,9 +70,13 @@ async function optimizeImages() {
   // update display
   stage.value = 'Optimizing'
   progress.value = 0
-  progressMax.value = processedImages.length
+  progressMax.value = processedImages.value.length
+  getCurrentInstance()?.proxy?.$forceUpdate()
+  await nextTick()
+  // await Promise.all([initOxi(), nextTick()])
 
   // TODO: optimize images
+  optimizedImages.value = await Promise.all(processedImages.value.map(async img => await limit(async () => ({ name: img.name, data: await encodePNG(img.data) }))))
 
   // move to next step
   saveResult()
@@ -72,10 +87,12 @@ async function saveResult() {
   stage.value = 'Compressing'
   progress.value = 0
   progressMax.value = props.files.length
+  getCurrentInstance()?.proxy?.$forceUpdate()
+  await nextTick()
 
   // add files to zip
   const zip = new JSZip()
-  const files = [...nonImages.value, ...processedImages.value]
+  const files = [...nonImages.value, ...optimizedImages.value]
   await Promise.all(files.map(async (file) => {
     await zip.file(file.name, file.data, {
       compression: 'DEFLATE',

@@ -19,11 +19,8 @@
     <div>
       <h3>TODO:</h3>
       <ul class="col">
-        <li title="currently tiling triples image dimensions when it really just needs to add 4 pixels one every side of it">
-          Optimize tiling
-        </li>
         <li title="currently errors during processing are ignored, and images are reverted to their original texture, add feedback">
-          Error feedback
+          Error feedback & Handling
         </li>
         <li>Ding when done</li>
         <li>
@@ -40,14 +37,15 @@
             <li>
               Image processor
               <ul>
-                <li>Auto</li>
                 <li>Manual</li>
+                <li>AntiFreeze (WebWorker for process & optimize)</li>
                 <li>Relayer</li>
+                <li>OxiPNG</li>
                 <li>Single-file save</li>
               </ul>
             </li>
             <li>Proper output-zip save name</li>
-            <li>Favicon</li>
+            <li>Proper Favicon</li>
           </ul>
         </li>
         <li>
