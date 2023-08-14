@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@jsquash/png": "^2.1.2",
+    "jsquash-oxipng": "^1.0.1",
     "jszip": "^3.10.1",
     "p-limit": "^4.0.0",
     "sass": "^1.63.6"

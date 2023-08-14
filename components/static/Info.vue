@@ -38,9 +38,8 @@
               Image processor
               <ul>
                 <li>Manual</li>
-                <li>AntiFreeze (WebWorker for process & optimize)</li>
+                <li>WebWorker for process</li>
                 <li>Relayer</li>
-                <li>OxiPNG</li>
                 <li>Single-file save</li>
               </ul>
             </li>

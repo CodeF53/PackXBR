@@ -3,10 +3,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/styles/layout.scss', '~/assets/styles/misc.scss'],
 
-  // don't die when compiling with @jsquash packages
-  build: { transpile: ['@jsquash/png'] },
+  build: { transpile: ['@jsquash/png', 'jsquash-oxipng'] },
   vite: {
-    optimizeDeps: { exclude: ['@jsquash/png'] },
+    optimizeDeps: { exclude: ['@jsquash/png', 'jsquash-oxipng'] },
     worker: { format: 'es' },
   },
 })
