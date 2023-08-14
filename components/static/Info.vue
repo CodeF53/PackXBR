@@ -38,7 +38,6 @@
               Image processor
               <ul>
                 <li>Manual</li>
-                <li>WebWorker for process</li>
                 <li>Relayer</li>
                 <li>Single-file save</li>
               </ul>

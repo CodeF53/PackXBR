@@ -11,10 +11,10 @@ function chunkArray(array: Array<any>, size: number): Array<Array<any>> {
 }
 
 // Create a utility function to create a web worker and return a promise
-function createWorkerPromise(array: Array<any>, WorkerConstructor: new () => Worker, iterProgress: () => void): Promise<any> {
+function createWorkerPromise(array: Array<any>, WorkerConstructor: new () => Worker, iterProgress: () => void, args: any[]): Promise<any> {
   return new Promise((resolve, reject) => {
     const worker = new WorkerConstructor()
-    worker.postMessage({ array })
+    worker.postMessage({ array, args })
 
     worker.onmessage = (event) => {
       if (event.data.type === 'done') {
@@ -31,7 +31,7 @@ function createWorkerPromise(array: Array<any>, WorkerConstructor: new () => Wor
   })
 }
 
-export default async function bulkOperation(array: any[], WorkerConstructor: new () => Worker, iterProgress = () => {}) {
+export default async function bulkOperation(array: any[], WorkerConstructor: new () => Worker, iterProgress = () => {}, ...args: any[]) {
   // Get number of threads we have to work with (you can adjust this based on your requirements)
   const numThreads = Math.min(navigator.hardwareConcurrency || 1, array.length)
 
@@ -39,7 +39,7 @@ export default async function bulkOperation(array: any[], WorkerConstructor: new
   const arrayChunks = chunkArray(array, numThreads)
 
   // Create promises for each worker operation
-  const workerPromises = arrayChunks.map(chunk => createWorkerPromise(chunk, WorkerConstructor, iterProgress))
+  const workerPromises = arrayChunks.map(chunk => createWorkerPromise(chunk, WorkerConstructor, iterProgress, args))
 
   // Await results of worker promises
   const results = await Promise.all(workerPromises)

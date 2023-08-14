@@ -4,9 +4,9 @@ import pLimit from 'p-limit'
 import decodePNG from '@jsquash/png/decode'
 import initPNG from '@jsquash/png/codec'
 
-import { processAuto } from '~/utils/image/process'
 import bulkOperation from '~/utils/bulk/bulkOperation'
 import OptimizeWorker from '~/utils/bulk/optimize.worker?worker'
+import ProcessWorker from '~/utils/bulk/process.worker?worker'
 
 const props = defineProps(['files', 'options'])
 const emit = defineEmits(['next'])
@@ -23,8 +23,6 @@ const images: Ref<Array<Image>> = ref([])
 const processedImages: Ref<Array<Image>> = ref([])
 const optimizedImages: Ref<Array<DumbFile>> = ref([])
 
-const limit = pLimit(8)
-
 async function loadFiles() {
   // update display
   stage.value = 'Loading Files'
@@ -35,6 +33,7 @@ async function loadFiles() {
 
   // load every file's arrayBuffer asynchronously
   console.time('loadFiles')
+  const limit = pLimit(8)
   await Promise.all(props.files.map(async (file: File) => await limit(async () => {
     const data = await file.arrayBuffer()
     if (isPNG(file))
@@ -58,11 +57,7 @@ async function processImages() {
   // (if auto) process all images
   if (props.options.auto) {
     console.time('Process')
-    processedImages.value = await Promise.all(images.value.map(async image => await limit(async () => {
-      const imageData = await processAuto(image, props.options.scale)
-      iterProgress()
-      return { name: image.name, data: imageData }
-    })))
+    processedImages.value = await bulkOperation(toRaw(images.value), ProcessWorker, iterProgress, props.options.scale)
     console.timeEnd('Process')
 
     // move to next step
@@ -96,6 +91,7 @@ async function saveResult() {
   await nextTick()
 
   // add files to zip
+  console.time('Compress')
   const zip = new JSZip()
   const files = [...nonImages.value, ...optimizedImages.value]
   await Promise.all(files.map(async (file) => {
@@ -105,6 +101,7 @@ async function saveResult() {
     })
     iterProgress()
   }))
+  console.timeEnd('Compress')
 
   // save zip
   stage.value = 'Saving'
