@@ -36,7 +36,7 @@ export default async function bulkOperation(array: any[], WorkerConstructor: new
   const numThreads = Math.min(navigator.hardwareConcurrency || 1, array.length)
 
   // Split array into numThreads chunks
-  const arrayChunks = chunkArray(array, Math.ceil(array.length / numThreads))
+  const arrayChunks = chunkArray(array, numThreads)
 
   // Create promises for each worker operation
   const workerPromises = arrayChunks.map(chunk => createWorkerPromise(chunk, WorkerConstructor, iterProgress))
