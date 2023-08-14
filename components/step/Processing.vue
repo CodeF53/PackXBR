@@ -33,6 +33,7 @@ async function loadFiles() {
   await initPNG()
 
   // load every file's arrayBuffer asynchronously
+  console.time('loadFiles')
   await Promise.all(props.files.map(async (file: File) => await limit(async () => {
     const data = await file.arrayBuffer()
     if (isPNG(file))
@@ -41,6 +42,7 @@ async function loadFiles() {
       nonImages.value.push({ name: file.name, data })
     progress.value++
   })))
+  console.timeEnd('loadFiles')
 
   // move to next step
   processImages()
@@ -56,11 +58,13 @@ async function processImages() {
 
   // (if auto) process all images
   if (props.options.auto) {
+    console.time('Process')
     processedImages.value = await Promise.all(images.value.map(async image => await limit(async () => {
       const imageData = await processAuto(image, props.options.scale)
       progress.value++
       return { name: image.name, data: imageData }
     })))
+    console.timeEnd('Process')
 
     // move to next step
     optimizeImages()
@@ -78,7 +82,9 @@ async function optimizeImages() {
   // await Promise.all([initOxi(), nextTick()])
 
   // TODO: optimize images
+  console.time('Optimize')
   optimizedImages.value = await Promise.all(processedImages.value.map(async img => await limit(async () => ({ name: img.name, data: await encodePNG(img.data) }))))
+  console.timeEnd('Optimize')
 
   // move to next step
   saveResult()
