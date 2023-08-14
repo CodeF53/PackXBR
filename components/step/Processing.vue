@@ -12,8 +12,10 @@ const props = defineProps(['files', 'options'])
 const emit = defineEmits(['next'])
 
 const stage = ref('')
-const progress: Ref<number | null> = ref(0)
-const progressMax: Ref<number | null> = ref(0)
+
+const dumbProgressBar: Ref<boolean> = ref(false)
+const progress: Ref<number> = ref(0)
+const progressMax: Ref<number> = ref(0)
 
 const nonImages: Ref<Array<DumbFile>> = ref([])
 const images: Ref<Array<Image>> = ref([])
@@ -103,8 +105,7 @@ async function saveResult() {
 
   // save zip
   stage.value = 'Saving'
-  progress.value = null // switch progressbar to one that implies movement but doesn't show progress
-  progressMax.value = null
+  dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
   saveBlob(await zip.generateAsync({ type: 'blob' }), 'tempName.zip')
 
   // move to Complete page
