@@ -58,6 +58,15 @@ function vSlice(imageMatrix: ImageMatrix, start: number, stop: number): ImageMat
   return imageMatrix.slice(start, stop)
 }
 
+function inverseDirection(direction: TileDirection): TileDirection {
+  switch (direction) {
+    case 'n': return 's'
+    case 's': return 'n'
+    case 'e': return 'w'
+    case 'w': return 'e'
+  }
+}
+
 function tileVoid(imageMatrix: ImageMatrix, direction: TileDirection, tileDistance: number): ImageMatrix {
   const width = imageMatrix[0].length
   const height = imageMatrix.length
@@ -76,18 +85,18 @@ function tileWrap(imageMatrix: ImageMatrix, direction: TileDirection, tileDistan
 
   switch (direction) {
     case 'n':
-      return vSlice(imageMatrix, 0, tileDistance)
-    case 's':
       return vSlice(imageMatrix, height - tileDistance, height)
+    case 's':
+      return vSlice(imageMatrix, 0, tileDistance)
     case 'e':
-      return hSlice(imageMatrix, width - tileDistance, width)
-    case 'w':
       return hSlice(imageMatrix, 0, tileDistance)
+    case 'w':
+      return hSlice(imageMatrix, width - tileDistance, width)
   }
 }
 
 function tileExtend(imageMatrix: ImageMatrix, direction: TileDirection, tileDistance: number): ImageMatrix {
-  const wrapShort = tileWrap(imageMatrix, direction, 1)
+  const wrapShort = tileWrap(imageMatrix, inverseDirection(direction), 1)
   const toStack = Array(tileDistance).fill(wrapShort)
 
   switch (direction) {
@@ -99,7 +108,7 @@ function tileExtend(imageMatrix: ImageMatrix, direction: TileDirection, tileDist
 }
 
 function tileMirror(imageMatrix: ImageMatrix, direction: TileDirection, tileDistance: number): ImageMatrix {
-  const wrapShort = tileWrap(imageMatrix, direction, tileDistance)
+  const wrapShort = tileWrap(imageMatrix, inverseDirection(direction), tileDistance)
 
   switch (direction) {
     case 'n': case 's':
