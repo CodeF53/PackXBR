@@ -23,6 +23,8 @@
           Error feedback & Handling
         </li>
         <li>Ding when done</li>
+        <li>Num threads to use (options, default 2)</li>
+        <li>Optimize toggle (default on)</li>
         <li>
           Functionality from original
           <ul>
@@ -38,7 +40,6 @@
               Image processor
               <ul>
                 <li>Manual</li>
-                <li>Single-file save</li>
               </ul>
             </li>
             <li>Proper output-zip save name</li>

@@ -83,30 +83,36 @@ async function optimizeImages() {
 }
 
 async function saveResult() {
-  // update display
-  stage.value = 'Compressing'
-  progress.value = 0
-  progressMax.value = props.files.length
-  getCurrentInstance()?.proxy?.$forceUpdate()
-  await nextTick()
-
-  // add files to zip
-  console.time('Compress')
-  const zip = new JSZip()
   const files = [...nonImages.value, ...optimizedImages.value]
-  await Promise.all(files.map(async (file) => {
-    await zip.file(file.name, file.data, {
-      compression: 'DEFLATE',
-      compressionOptions: { level: 9 },
-    })
-    iterProgress()
-  }))
-  console.timeEnd('Compress')
+  if (files.length > 1) {
+    // update display
+    stage.value = 'Compressing'
+    progress.value = 0
+    progressMax.value = props.files.length
 
-  // save zip
-  stage.value = 'Saving'
-  dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
-  saveBlob(await zip.generateAsync({ type: 'blob' }), 'tempName.zip')
+    // add files to zip
+    console.time('Compress')
+    const zip = new JSZip()
+    await Promise.all(files.map(async (file) => {
+      await zip.file(file.name, file.data, {
+        compression: 'DEFLATE',
+        compressionOptions: { level: 9 },
+      })
+      iterProgress()
+    }))
+    console.timeEnd('Compress')
+
+    // save zip
+    stage.value = 'Saving'
+    dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
+    saveBlob(await zip.generateAsync({ type: 'blob' }), 'tempName.zip')
+  }
+  else {
+    // save image
+    stage.value = 'Saving'
+    dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
+    saveBlob(new Blob([files[0].data]), files[0].name)
+  }
 
   // move to Complete page
   emit('next')
