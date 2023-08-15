@@ -1,6 +1,6 @@
 import { endsWithAny, includesAny } from '../misc'
-import { containsTranslucent, cullTranslucent } from './miscProcess'
-import { crop, tile } from './tile'
+import { containsTranslucent, crop, cullTranslucent, relayer } from './miscProcess'
+import { tile } from './tile'
 import { xbrz } from './xbrz'
 
 function getSettings(fileName: string): ProcessSettings {
@@ -47,8 +47,8 @@ export async function process(imageData: ImageData, scaleFactor: number, setting
   if (shouldCull)
     cullTranslucent(processImageData)
 
-  // if (settings.relayer)
-  //   relayer(croppedImageData, imageData)
+  if (settings.relayer)
+    relayer(processImageData, imageData, scaleFactor)
 
   return processImageData
 }

@@ -145,12 +145,3 @@ export function tile(imageData: ImageData, tileSettings: TileSettings, tileDista
   imageMatrix = hStack(tileW, imageMatrix, tileE)
   return spliceImageData(imageMatrix)
 }
-
-export function crop(imageData: ImageData, choppy: number): ImageData {
-  const { width, height } = imageData
-  let imageMatrix = sliceImageData(imageData)
-
-  imageMatrix = imageMatrix.slice(choppy, height - choppy).map(row => row.slice(choppy, width - choppy))
-
-  return spliceImageData(imageMatrix)
-}
