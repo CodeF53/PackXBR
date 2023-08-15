@@ -31,7 +31,7 @@ function createWorkerPromise(array: Array<any>, WorkerConstructor: new () => Wor
   })
 }
 
-export default async function bulkOperation(array: any[], WorkerConstructor: new () => Worker, iterProgress = () => {}, ...args: any[]) {
+export default async function bulkOperation(array: any[], WorkerConstructor: new () => Worker, iterProgress: () => void, ...args: any[]) {
   // Get number of threads we have to work with (you can adjust this based on your requirements)
   const numThreads = Math.min(navigator.hardwareConcurrency || 1, array.length)
 

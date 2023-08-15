@@ -19,7 +19,7 @@ defineEmits(['update:auto', 'update:scale', 'next'])
           <input
             :id="`auto${mode}`" type="radio" name="scaleFactor"
             :value="mode" :checked="mode === $props.auto"
-            @change="(e) => $emit('update:auto', e.target.value)"
+            @change="(e) => $emit('update:auto', mode)"
           >
           <label :for="`auto${mode}`">{{ mode ? 'auto' : 'manual' }}</label>
         </div>

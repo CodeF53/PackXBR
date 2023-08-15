@@ -23,7 +23,7 @@
           Error feedback & Handling
         </li>
         <li>Ding when done</li>
-        <li>Num threads to use (options, default 2)</li>
+        <li>Num threads to use (options, default 2 - threadCount)</li>
         <li>Optimize toggle (default on)</li>
         <li>
           Functionality from original
@@ -40,6 +40,14 @@
               Image processor
               <ul>
                 <li>Manual</li>
+                <ul>
+                  <li>Optimize as scale</li>
+                  <li>"Processing" placeholder</li>
+                  <li>Presets</li>
+                  <li>ProgressBar</li>
+                  <li>Keyboard shortcuts</li>
+                  <li>Keyboard shortcut guide</li>
+                </ul>
               </ul>
             </li>
             <li>Proper output-zip save name</li>

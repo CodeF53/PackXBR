@@ -65,6 +65,19 @@ async function processImages() {
   }
   // otherwise, Manual component will start rendering, which will add to processedImages and call saveResult when done
 }
+function manualPrev() {
+  if (progress.value < 1)
+    return
+  processedImages.value.pop()
+  progress.value--
+}
+function manualNext(image: Image) {
+  processedImages.value.push(image)
+  progress.value++
+
+  if (progress.value === progressMax.value)
+    optimizeImages()
+}
 
 async function optimizeImages() {
   // update display
@@ -122,7 +135,13 @@ onMounted(loadFiles)
 </script>
 
 <template>
-  <div v-if="!props.options.auto && stage === 'Processing Images'" TODO="Manual GUI Component" />
+  <UtilManual
+    v-if="!props.options.auto && stage === 'Processing Images'"
+    :image="images[progress]"
+    :scale-factor="options.scale"
+    :prev="manualPrev"
+    :next="manualNext"
+  />
   <div v-else class="col gap1">
     <h2>{{ stage }}</h2>
     <progress v-if="dumbProgressBar" />
