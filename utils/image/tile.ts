@@ -1,6 +1,6 @@
 function splitSections(inputArray: Array<any> | Uint8ClampedArray, size: number): Array<Array<any>> {
   if (inputArray.length % size !== 0)
-    throw new Error('descriptive error')
+    throw new Error('inputArray must be a multiple of the split size')
 
   const outputArray: Array<any> = []
   for (let i = 0; i < inputArray.length; i += size)
