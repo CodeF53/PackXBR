@@ -1,5 +1,5 @@
 import { encode as encodePNG } from '@jsquash/png'
-import optimize from 'jsquash-oxipng/optimise'
+import optimize from '@jsquash/oxipng/optimise'
 
 export default async function optimizeImage(image: Image) {
   const encoded = await encodePNG(image.data)

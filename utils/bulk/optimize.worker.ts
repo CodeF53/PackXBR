@@ -1,5 +1,5 @@
 import { init as initEncode } from '@jsquash/png/encode'
-import { init as initOxiPNG } from 'jsquash-oxipng/optimise'
+import { init as initOxiPNG } from '@jsquash/oxipng/optimise'
 import pLimit from 'p-limit'
 import optimizeImage from '~/utils/image/optimize'
 
