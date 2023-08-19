@@ -9,6 +9,9 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: { exclude: ['@jsquash/png', '@jsquash/oxipng'] },
     plugins: [replaceWorkerImportMetaUrl()],
-    worker: { format: 'es' },
+    worker: {
+      plugins: [replaceWorkerImportMetaUrl()],
+      format: 'es',
+    },
   },
 })
