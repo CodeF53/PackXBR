@@ -16,8 +16,8 @@
         Designed for development of Minecraft resource packs in the <a href="modrinth.com/resourcepack/VanillaXBR">VanillaXBR</a> ecosystem
       </span>
     </p>
-    <div>
-      <h3>TODO:</h3>
+    <details>
+      <summary>TODO:</summary>
       <ul class="col">
         <li title="currently errors during processing are ignored, and images are reverted to their original texture, add feedback">
           Error feedback & Handling
@@ -63,6 +63,6 @@
           </ul>
         </li>
       </ul>
-    </div>
+    </details>
   </main>
 </template>
