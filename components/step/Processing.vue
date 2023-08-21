@@ -57,7 +57,7 @@ async function processImages() {
   // (if auto) process all images
   if (props.options.auto) {
     console.time('Process')
-    processedImages.value = await bulkOperation(toRaw(images.value), ProcessWorker, iterProgress, props.options.scale)
+    processedImages.value = await bulkOperation(toRaw(images.value), ProcessWorker, props.options.threads, iterProgress, props.options.scale)
     console.timeEnd('Process')
 
     // move to next step
@@ -87,7 +87,7 @@ async function optimizeImages() {
 
   // optimize images
   console.time('Optimize')
-  const results = await bulkOperation(toRaw(processedImages.value), OptimizeWorker, iterProgress)
+  const results = await bulkOperation(toRaw(processedImages.value), OptimizeWorker, props.options.threads, iterProgress)
   console.timeEnd('Optimize')
   optimizedImages.value = results
 
@@ -126,7 +126,6 @@ async function saveResult() {
     dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
     saveBlob(new Blob([files[0].data]), files[0].name)
   }
-
   // move to Complete page
   emit('next')
 }

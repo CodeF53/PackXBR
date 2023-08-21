@@ -1,6 +1,9 @@
 <script setup>
-defineProps(['auto', 'scale'])
-defineEmits(['update:auto', 'update:scale', 'next'])
+defineProps(['auto', 'scale', 'threads'])
+const emit = defineEmits(['update:auto', 'update:scale', 'update:threads', 'next'])
+
+const maxThreads = ref(navigator.hardwareConcurrency)
+onMounted(() => emit('update:threads', Math.max(navigator.hardwareConcurrency - 2, 1)))
 </script>
 
 <template>
@@ -24,6 +27,11 @@ defineEmits(['update:auto', 'update:scale', 'next'])
           <label :for="`auto${mode}`">{{ mode ? 'auto' : 'manual' }}</label>
         </div>
       </div>
+    </div>
+    <div class="row">
+      <label>Threads</label>
+      <input type="range" min="1" :max="maxThreads" :value="$props.threads" @change="(e) => $emit('update:threads', e.target.value)">
+      <span>{{ $props.threads }} / {{ maxThreads }}</span>
     </div>
     <button @click="$emit('next')">
       Go

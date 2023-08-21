@@ -23,7 +23,6 @@
           Error feedback & Handling
         </li>
         <li>Ding when done</li>
-        <li>Num threads to use (options, default 2 - threadCount)</li>
         <li>Optimize toggle (default on)</li>
         <li>
           Functionality from original
@@ -42,7 +41,7 @@
                 <li>Manual</li>
                 <ul>
                   <li>Optimize as scale</li>
-                  <li>"Processing" placeholder</li>
+                  <li>"Processing" placeholder (while waiting for current image to process)</li>
                   <li>Presets</li>
                   <li>ProgressBar</li>
                   <li>Keyboard shortcuts</li>
