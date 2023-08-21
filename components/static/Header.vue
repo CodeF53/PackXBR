@@ -9,3 +9,9 @@
     <StaticGithubCorner />
   </header>
 </template>
+
+<style lang="scss">
+  header {
+    h1 { font-size: 4rem; }
+  }
+</style>

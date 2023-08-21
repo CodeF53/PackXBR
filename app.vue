@@ -23,20 +23,26 @@ function next() {
 </script>
 
 <template>
-  <div id="app" class="col centerChildren spaceEvenly">
+  <div id="app" class="col centerChildren">
     <StaticHeader />
+    <div class="spacer" />
 
     <StepInput v-if="state === 'input'" v-model:files="files" @next="next()" />
     <StepOptions v-else-if="state === 'options'" v-model:scale="scale" v-model:auto="auto" v-model:threads="threads" @next="next()" />
     <StepProcessing v-else-if="state === 'processing'" :files="files" :options="{ scale, auto, threads }" @next="next()" />
     <StepComplete v-else-if="state === 'complete'" @next="next()" />
 
+    <div class="spacer" />
+
     <StaticInfo />
+
+    <StaticBackground />
   </div>
 </template>
 
 <style>
   #app {
-    min-height: 100vh;
+    min-height: calc(100vh - 4rem);
+    margin: 2rem;
   }
 </style>

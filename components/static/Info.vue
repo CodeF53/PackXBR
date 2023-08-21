@@ -24,6 +24,7 @@
         </li>
         <li>Ding when done</li>
         <li>Optimize toggle (default on)</li>
+        <li>Hide/Disable threads option when manual is selected</li>
         <li>
           Functionality from original
           <ul>
@@ -56,7 +57,6 @@
         <li>
           UI changes from Misterk
           <ul>
-            <li>Background</li>
             <li>Color-changing progress bars</li>
             <li>Persistent Logo</li>
             <li>Other shit</li>

@@ -10,6 +10,13 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
+  "dependencies": {
+    "@jsquash/oxipng": "^1.0.1",
+    "@jsquash/png": "^2.1.2",
+    "jszip": "^3.10.1",
+    "p-limit": "^4.0.0",
+    "sass": "^1.63.6"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",
     "@nuxt/devtools": "latest",
@@ -28,12 +35,5 @@
   },
   "lint-staged": {
     "*": "eslint --fix"
-  },
-  "dependencies": {
-    "@jsquash/oxipng": "^1.0.1",
-    "@jsquash/png": "^2.1.2",
-    "jszip": "^3.10.1",
-    "p-limit": "^4.0.0",
-    "sass": "^1.63.6"
   }
 }
