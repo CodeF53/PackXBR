@@ -1,5 +1,5 @@
 <script setup>
-const emit = defineEmits(['next'])
+defineEmits(['next'])
 </script>
 
 <template>
