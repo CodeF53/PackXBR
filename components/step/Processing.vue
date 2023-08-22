@@ -140,6 +140,8 @@ onMounted(loadFiles)
     :scale-factor="options.scale"
     :prev="manualPrev"
     :next="manualNext"
+    :progress="progress"
+    :progress-max="progressMax"
   />
   <div v-else class="col gap1">
     <h2>{{ stage }}</h2>

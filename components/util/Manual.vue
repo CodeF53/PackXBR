@@ -8,6 +8,8 @@ const props = defineProps<{
   scaleFactor: number
   next: (image: Image) => void
   prev: () => void
+  progress: number
+  progressMax: number
 }>()
 
 const tileOptions: TileOption[] = ['void', 'wrap', 'extend', 'mirror']
@@ -22,6 +24,8 @@ const inputCanvas: Ref<HTMLCanvasElement | undefined> = ref()
 const processCanvas: Ref<HTMLCanvasElement | undefined> = ref()
 const processedImage: Ref<Image | undefined> = ref()
 async function processImage() {
+  processedImage.value = undefined
+
   if (!(inputCanvas.value && processCanvas.value))
     return
   const inputCtx = createContext(inputCanvas.value)
@@ -37,11 +41,67 @@ async function processImage() {
 }
 onMounted(processImage)
 onBeforeUpdate(processImage)
+
+function cycleTileOption(direction: TileDirection) {
+  const currentSetting = settings.value.tile[direction]
+  settings.value.tile[direction] = tileOptions[(tileOptions.indexOf(currentSetting) + 1) % tileOptions.length]
+}
+function cycleTilePreset(offset: number) {
+  // TODO
+}
+
+function hotkey(e: KeyboardEvent) {
+  // disable hotkeys while viewer is open
+  // if (viewer.fulled)
+  //   return
+
+  const { key, ctrlKey, shiftKey } = e
+
+  if (shiftKey) {
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key))
+      e.preventDefault()
+
+    switch (key) {
+      case 'ArrowUp': return cycleTileOption('n')
+      case 'ArrowDown': return cycleTileOption('s')
+      case 'ArrowLeft': return cycleTileOption('w')
+      case 'ArrowRight': return cycleTileOption('e')
+    }
+  }
+  else if (ctrlKey) {
+    if (['ArrowUp', 'ArrowDown'].includes(key))
+      e.preventDefault()
+
+    switch (key) {
+      case 'ArrowUp': return cycleTilePreset(-1)
+      case 'ArrowDown': return cycleTilePreset(1)
+    }
+  }
+  else {
+    if ([' ', '.', 'ArrowLeft', 'ArrowRight', 'p'].includes(key))
+      e.preventDefault()
+
+    switch (key) {
+      case 'ArrowLeft': return props.prev()
+      case 'ArrowRight':
+        if (processedImage.value)
+          return props.next(processedImage.value)
+        break
+      case ' ': return props.next(props.image)
+      case '.':
+        return settings.value.relayer = !settings.value.relayer
+      case 'p':
+        return '' // TODO: enable image viewer
+    }
+  }
+}
+onBeforeMount(() => document.addEventListener('keydown', hotkey))
+onBeforeUnmount(() => document.removeEventListener('keydown', hotkey))
 </script>
 
 <template>
   <!-- TODO: tooltips -->
-  <div class="col">
+  <div class="col gap2">
     <div id="settingHeader" class="row gap4">
       <span>TODO: presets</span>
       <LabeledInput v-model="settings.relayer" name="relayer" label="relayer" type="checkbox" />
@@ -80,17 +140,21 @@ onBeforeUpdate(processImage)
         </p>
       </div>
     </div>
-    <div class="row gap2">
+    <div class="row gap2 centerChildren">
+      <progress :value="progress" :max="progressMax" />
+      <span>{{ progress }} / {{ progressMax }}</span>
       <div class="spacer" />
-      <button @click="prev()">
+      <button :disabled="progress === 0" @click="prev()">
         back
       </button>
       <button @click="next(image)">
         skip
       </button>
+      <!-- I would add :disabled="!processedImage", but that leads to a re-render loop -->
       <button @click="processedImage && next(processedImage)">
         next
       </button>
     </div>
+    <StaticManualKeybinds />
   </div>
 </template>
