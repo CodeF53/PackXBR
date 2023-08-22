@@ -40,6 +40,7 @@
                   <li>Optimize as scale</li>
                   <li>"Processing" placeholder (while waiting for current image to process)</li>
                   <li>Presets</li>
+                  <li>Tooltips</li>
                 </ul>
               </ul>
             </li>
