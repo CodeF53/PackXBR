@@ -1,9 +1,13 @@
 <script setup>
-defineProps(['auto', 'scale', 'threads'])
-const emit = defineEmits(['update:auto', 'update:scale', 'update:threads', 'next'])
+const props = defineProps(['options'])
+const emit = defineEmits(['update:options', 'next'])
+
+function updateValue(key, value) {
+  emit('update:options', { ...props.options, [key]: value })
+}
 
 const maxThreads = ref(navigator.hardwareConcurrency)
-onMounted(() => emit('update:threads', Math.max(navigator.hardwareConcurrency - 2, 1)))
+onMounted(() => updateValue('threads', Math.max(navigator.hardwareConcurrency - 2, 1)))
 </script>
 
 <template>
@@ -11,7 +15,7 @@ onMounted(() => emit('update:threads', Math.max(navigator.hardwareConcurrency - 
     <div class="row gap2">
       <div class="col spaceEvenly">
         <label for="scaleFactor">Scale Factor</label>
-        <select id="scaleFactor" :value="$props.scale" @change="(e) => $emit('update:scale', e.target.value)">
+        <select id="scaleFactor" :value="$props.options.scale" @change="(e) => updateValue('scale', e.target.value)">
           <option v-for="value in [2, 3, 4, 5, 6]" :key="value" :value="value">
             {{ value }}x
           </option>
@@ -21,16 +25,27 @@ onMounted(() => emit('update:threads', Math.max(navigator.hardwareConcurrency - 
         <div v-for="(mode, i) in [true, false]" :key="i">
           <input
             :id="`auto${mode}`" type="radio" name="scaleFactor"
-            :value="mode" :checked="mode === $props.auto"
-            @change="(e) => $emit('update:auto', mode)"
+            :value="mode" :checked="mode === $props.options.auto"
+            @change="(e) => updateValue('auto', mode)"
           >
           <label :for="`auto${mode}`">{{ mode ? 'auto' : 'manual' }}</label>
         </div>
       </div>
     </div>
-    <div class="col">
-      <label>Threads {{ $props.threads }} / {{ maxThreads }}</label>
-      <input type="range" min="1" :max="maxThreads" :value="$props.threads" @change="(e) => $emit('update:threads', e.target.value)">
+    <div v-if="$props.options.auto" class="col">
+      <label>Threads {{ $props.options.threads }} / {{ maxThreads }}</label>
+      <input
+        type="range" min="1" :max="maxThreads" :value="$props.options.threads"
+        @change="(e) => updateValue('threads', e.target.value)"
+      >
+    </div>
+    <div class="row gap1">
+      <label for="optimize">Optimize</label>
+      <input
+        id="optimize"
+        type="checkbox" :checked="$props.options.optimize"
+        @change="(e) => updateValue('optimize', e.target.checked)"
+      >
     </div>
     <button @click="$emit('next')">
       Go

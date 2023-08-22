@@ -22,9 +22,6 @@
         <li title="currently errors during processing are ignored, and images are reverted to their original texture, add feedback">
           Error feedback & Handling
         </li>
-        <li>Ding when done</li>
-        <li>Optimize toggle (default on)</li>
-        <li>Hide/Disable threads option when manual is selected</li>
         <li>
           Functionality from original
           <ul>

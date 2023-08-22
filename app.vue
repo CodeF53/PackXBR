@@ -2,10 +2,12 @@
 const state = ref('input')
 const files = ref([])
 
-// TODO: combine into one options object { scale, auto, threads }
-const scale = ref(4)
-const auto = ref(true)
-const threads = ref(1) // updated to navigator.hardwareConcurrency - 2 inside StepOptions
+const options = ref({
+  scale: 4,
+  auto: true,
+  threads: 1, // updated to navigator.hardwareConcurrency - 2 inside StepOptions
+  optimize: true,
+})
 
 function next() {
   state.value = (() => {
@@ -27,10 +29,22 @@ function next() {
     <StaticHeader />
     <div class="spacer" />
 
-    <StepInput v-if="state === 'input'" v-model:files="files" @next="next()" />
-    <StepOptions v-else-if="state === 'options'" v-model:scale="scale" v-model:auto="auto" v-model:threads="threads" @next="next()" />
-    <StepProcessing v-else-if="state === 'processing'" :files="files" :options="{ scale, auto, threads }" @next="next()" />
-    <StepComplete v-else-if="state === 'complete'" @next="next()" />
+    <StepInput
+      v-if="state === 'input'"
+      v-model:files="files" @next="next()"
+    />
+    <StepOptions
+      v-else-if="state === 'options'"
+      v-model:options="options" @next="next()"
+    />
+    <StepProcessing
+      v-else-if="state === 'processing'"
+      :files="files" :options="options" @next="next()"
+    />
+    <StepComplete
+      v-else-if="state === 'complete'"
+      @next="next()"
+    />
 
     <div class="spacer" />
 

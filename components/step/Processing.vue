@@ -6,6 +6,7 @@ import initPNG from '@jsquash/png/codec'
 
 import bulkOperation from '~/utils/bulk/bulkOperation'
 import OptimizeWorker from '~/utils/bulk/optimize.worker?worker'
+import EncodeWorker from '~/utils/bulk/encode.worker?worker'
 import ProcessWorker from '~/utils/bulk/process.worker?worker'
 
 const props = defineProps(['files', 'options'])
@@ -81,14 +82,24 @@ function manualNext(image: Image) {
 
 async function optimizeImages() {
   // update display
-  stage.value = 'Optimizing'
   progress.value = 0
   progressMax.value = processedImages.value.length
 
-  // optimize images
-  console.time('Optimize')
-  const results = await bulkOperation(toRaw(processedImages.value), OptimizeWorker, props.options.threads, iterProgress)
-  console.timeEnd('Optimize')
+  let results
+  if (props.options.optimize) {
+    // optimize images
+    stage.value = 'Optimizing'
+    console.time('Optimize')
+    results = await bulkOperation(toRaw(processedImages.value), OptimizeWorker, props.options.threads, iterProgress)
+    console.timeEnd('Optimize')
+  }
+  else {
+    // encode images as png
+    stage.value = 'Encoding'
+    console.time('Encode')
+    results = await bulkOperation(toRaw(processedImages.value), EncodeWorker, props.options.threads, iterProgress)
+    console.timeEnd('Encode')
+  }
   optimizedImages.value = results
 
   // move to next step
