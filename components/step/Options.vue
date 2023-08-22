@@ -28,10 +28,9 @@ onMounted(() => emit('update:threads', Math.max(navigator.hardwareConcurrency - 
         </div>
       </div>
     </div>
-    <div class="row">
-      <label>Threads</label>
+    <div class="col">
+      <label>Threads {{ $props.threads }} / {{ maxThreads }}</label>
       <input type="range" min="1" :max="maxThreads" :value="$props.threads" @change="(e) => $emit('update:threads', e.target.value)">
-      <span>{{ $props.threads }} / {{ maxThreads }}</span>
     </div>
     <button @click="$emit('next')">
       Go
