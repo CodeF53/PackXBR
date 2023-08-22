@@ -1,6 +1,6 @@
 <template>
   <header class="col centerChildren">
-    <h1 id="logo">
+    <h1>
       Pack XBR
     </h1>
     <h2>

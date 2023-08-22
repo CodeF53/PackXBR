@@ -4,7 +4,9 @@ import JSZip from 'jszip'
 defineProps(['files'])
 const emit = defineEmits(['update:files', 'next'])
 
+const fileDrag = ref(false)
 const selectedText = ref('No files selected')
+const hasFiles = ref(false)
 
 async function handleFiles(fileList) {
   // if there are any zip files, select the first one to process
@@ -34,6 +36,7 @@ async function handleFiles(fileList) {
     return
   }
   // update selectedText
+  hasFiles.value = true
   selectedText.value = `${images.length} image(s)`
 
   // broadcast new files
@@ -49,35 +52,48 @@ function handleFilePaste(e) {
   if (files.length > 0)
     handleFiles(files)
 }
+const dragStart = () => fileDrag.value = true
+function dragLeave(e) {
+  if (e.explicitOriginalTarget.nodeName === 'BODY')
+    fileDrag.value = false
+}
+const dragEnd = () => fileDrag.value = false
 const prevent = e => e.preventDefault()
 onBeforeMount(() => {
   document.addEventListener('drop', handleFileDrop)
-  document.addEventListener('paste', handleFilePaste)
+  document.addEventListener('paste', handleFilePaste, { passive: true })
   document.addEventListener('dragover', prevent)
+
+  // keep track of if there is a file being dragged, for file input feedback
+  document.addEventListener('dragenter', dragStart)
+  document.addEventListener('dragend', dragEnd)
+  document.body.addEventListener('dragleave', dragLeave)
 })
 onBeforeUnmount(() => {
   document.removeEventListener('drop', handleFileDrop)
   document.removeEventListener('paste', handleFilePaste)
+  document.removeEventListener('dragover', prevent)
+  document.removeEventListener('dragenter', dragStart)
+  document.removeEventListener('dragend', dragEnd)
+  document.body.removeEventListener('dragleave', dragLeave)
 })
+// (comment to fix syntax highlights)
 </script>
 
 <template>
-  <div class="col gap2">
-    <div class="row gap-1 centerChildren">
-      <input type="file" accept=".zip,.png" multiple @change="handleFileInput">
-      <span>{{ selectedText }}</span>
-    </div>
-    <button v-if="files.length > 0" @click="$emit('next')">
+  <div class="col gap2 centerChildren">
+    <span>Drop images or zip here</span>
+    <StaticLogo :class="{ showBox: hasFiles, fileDrag }" @click="$refs.input.click()" />
+    <input ref="input" type="file" accept=".zip,.png" multiple @change="handleFileInput">
+    <span>{{ selectedText }}</span>
+    <button :class="{ hidden: !hasFiles }" @click="$emit('next')">
       Next
     </button>
   </div>
 </template>
 
 <style lang="scss">
-  input[type="file"] {
-    font-size: 0;
-    &::file-selector-button {
-      font-size: 0.8rem;
-    }
-  }
+input[type="file"] {
+  display: none;
+}
 </style>

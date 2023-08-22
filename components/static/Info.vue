@@ -26,9 +26,6 @@
           Functionality from original
           <ul>
             <li>
-              Fancy File input
-            </li>
-            <li>
               Manual processor
               <ul>
                 <li>Detail Image viewer (click to view big)</li>
@@ -36,6 +33,7 @@
                 <li>"Processing" placeholder (while waiting for current image to process)</li>
                 <li>Presets</li>
                 <li>Tooltips</li>
+                <li>CSS</li>
               </ul>
             </li>
             <li>Proper output-zip save name</li>
