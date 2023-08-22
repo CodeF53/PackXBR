@@ -40,6 +40,25 @@ async function handleFiles(fileList) {
   emit('update:files', files)
 }
 const handleFileInput = e => handleFiles([...e.target.files])
+function handleFileDrop(e) {
+  e.preventDefault()
+  handleFiles([...e.dataTransfer.files])
+}
+function handleFilePaste(e) {
+  const files = [...e.clipboardData.files]
+  if (files.length > 0)
+    handleFiles(files)
+}
+const prevent = e => e.preventDefault()
+onBeforeMount(() => {
+  document.addEventListener('drop', handleFileDrop)
+  document.addEventListener('paste', handleFilePaste)
+  document.addEventListener('dragover', prevent)
+})
+onBeforeUnmount(() => {
+  document.removeEventListener('drop', handleFileDrop)
+  document.removeEventListener('paste', handleFilePaste)
+})
 </script>
 
 <template>
@@ -49,7 +68,7 @@ const handleFileInput = e => handleFiles([...e.target.files])
       <span>{{ selectedText }}</span>
     </div>
     <button v-if="files.length > 0" @click="$emit('next')">
-      GO
+      Next
     </button>
   </div>
 </template>

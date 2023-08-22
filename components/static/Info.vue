@@ -29,12 +29,7 @@
           Functionality from original
           <ul>
             <li>
-              File input
-              <ul>
-                <li>Drop input</li>
-                <li>Paste input</li>
-                <li>Fancy</li>
-              </ul>
+              Fancy File input
             </li>
             <li>
               Image processor
