@@ -27,6 +27,7 @@ export default defineNuxtConfig({
         { name: 'description', content: 'Bulk Pixel Art Upscaler' },
         { name: 'keywords', content: 'xBR, xBRZ, pixel art, upscaler, bulk' },
         { name: 'author', content: 'F53' },
+        { name: 'theme-color', content: '#4b0000' },
         // twitter stuff
         { property: 'og:title', content: 'PackXBR' },
         { property: 'og:description', content: 'Bulk Pixel Art Upscaler' },
