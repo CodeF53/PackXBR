@@ -17,6 +17,7 @@ globalThis.onmessage = async (event) => {
     const img = array[i]
     const imageData = await processAuto(img, scaleFactor)
     arrayResults[i] = { name: img.name, data: imageData }
+    globalThis.postMessage({ type: 'update' })
   }
 
   // Send the results back to the main thread

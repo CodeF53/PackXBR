@@ -85,10 +85,12 @@ async function draw() {
 onMounted(draw)
 onUpdated(draw)
 
-const viewerImg: HTMLImageElement = document.createElement('img')
+const viewerImage: HTMLImageElement = document.createElement('img')
 let viewer: Viewer
 onMounted(() => {
-  viewer = new Viewer(viewerImg, {
+  viewerImage.id = 'viewerImage'
+  document.body.appendChild(viewerImage)
+  viewer = new Viewer(viewerImage, {
     navbar: false,
     title: false,
     toolbar: {
@@ -105,10 +107,9 @@ onMounted(() => {
       next: false,
     },
   })
-  document.body.appendChild(viewerImg)
 })
 onBeforeUnmount(() => {
-  viewerImg.remove()
+  viewerImage.remove()
   viewer.destroy()
 })
 function clickEventViewCanvas(e: MouseEvent) {
@@ -116,7 +117,7 @@ function clickEventViewCanvas(e: MouseEvent) {
     viewCanvas(e.target as HTMLCanvasElement)
 }
 function viewCanvas(canvas: HTMLCanvasElement) {
-  viewerImg.src = canvas.toDataURL()
+  viewerImage.src = canvas.toDataURL()
   viewer.show()
   viewer.update()
 }
@@ -307,4 +308,6 @@ const tooltips = {
     }
   }
 }
+
+body > #viewerImage { display: none; }
 </style>

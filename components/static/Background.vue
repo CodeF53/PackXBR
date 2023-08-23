@@ -9,7 +9,8 @@
 
 <style lang="scss">
   #background {
-    position: fixed;
+    position: absolute;
+    overflow: hidden;
     left: 0;
     right: 0;
     top: 0;
@@ -26,7 +27,7 @@
     }
     svg {
       top: 9rem;
-      position: fixed;
+      position: absolute;
       width: 200vw;
       height: 5rem;
 

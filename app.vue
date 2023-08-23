@@ -27,7 +27,6 @@ function next() {
 <template>
   <div id="app" class="col centerChildren">
     <StaticHeader />
-    <div class="spacer" />
 
     <StepInput
       v-if="state === 'input'"
@@ -56,7 +55,8 @@ function next() {
 
 <style>
   #app {
-    min-height: calc(100vh - 4rem);
-    margin: 2rem;
+    min-height: calc(100vh - 3rem);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
   }
 </style>
