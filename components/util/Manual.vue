@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import LabeledInput from './LabeledInput.vue'
-import { process } from '~/utils/image/process'
+import ProcessWorker from '~/utils/image/process.worker?worker'
 import { createContext, setImageData } from '~/utils/image/canvas'
 
 const props = defineProps<{
@@ -26,18 +26,60 @@ const inputCanvas: Ref<HTMLCanvasElement | undefined> = ref()
 const processCanvas: Ref<HTMLCanvasElement | undefined> = ref()
 let inputCtx: CanvasRenderingContext2D
 let processCtx: CanvasRenderingContext2D
-onMounted(() => { // init rendering context on mount
+function initRenderingContext() {
   inputCtx = createContext(inputCanvas.value)
   processCtx = createContext(processCanvas.value)
-})
+}
+onMounted(initRenderingContext)
+
+// worker for processing images (so we don't freeze while processing)
+const worker: Ref<Worker> = ref(new ProcessWorker())
+function initWorker() {
+  worker.value.postMessage({ init: true })
+}
+onMounted(initWorker)
+// delete worker when done
+onBeforeUnmount(() => worker.value.terminate())
+
+const processingPlaceHolder: Ref<ImageData | undefined> = ref()
+function initPlaceHolder() {
+  const ctx = createContext()
+  const canvas = ctx.canvas
+  canvas.width = 300
+  canvas.height = 200
+  ctx.fillStyle = 'black'
+  ctx.fillRect(0, 0, 200, 200)
+  ctx.fillStyle = 'white'
+  ctx.font = '40px Arial'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('processing', 100, 100)
+
+  processingPlaceHolder.value = ctx.getImageData(0, 0, 200, 200)
+}
+onBeforeMount(initPlaceHolder)
 
 const processedImage: Ref<Image | undefined> = ref()
 async function draw() {
+  // prevent going forward with old image
+  processedImage.value = undefined
+
+  // update input canvas
   setImageData(inputCtx, props.image.data)
-  // TODO: fix freezing here with big images
-  const procData = await process(props.image.data, props.scaleFactor, settings.value)
-  setImageData(processCtx, procData)
-  processedImage.value = { name: props.image.name, data: procData }
+
+  if (processingPlaceHolder.value)
+    // "Processing" placeholder (while waiting for current image to process)
+    setImageData(processCtx, processingPlaceHolder.value)
+
+  const currentProgress = props.progress
+  worker.value.onmessage = ({ data }) => {
+    // if we changed image since starting, toss result
+    if (props.progress === currentProgress) {
+      setImageData(processCtx, data)
+      processedImage.value = { name: props.image.name, data }
+    }
+  }
+  worker.value.postMessage([toRaw(props.image.data), props.scaleFactor, toRaw(settings.value)])
 }
 onMounted(draw)
 onUpdated(draw)
@@ -128,7 +170,6 @@ const tooltips = {
 </script>
 
 <template>
-  <!-- TODO: tooltips -->
   <div id="manual" class="col gap2">
     <div id="settingHeader" class="row gap4">
       <select v-model="settings.tile" :title="tooltips.preset">
@@ -168,7 +209,6 @@ const tooltips = {
       <button :title="tooltips.skip" @click="next(image)">
         skip
       </button>
-      <!-- I would add :disabled="!processedImage", but that leads to a re-render loop -->
       <button :title="tooltips.next" @click="processedImage && next(processedImage)">
         next
       </button>

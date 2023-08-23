@@ -73,6 +73,9 @@ function manualPrev() {
   progress.value--
 }
 function manualNext(image: Image) {
+  if (image === undefined)
+    return
+
   processedImages.value.push(image)
   progress.value++
 

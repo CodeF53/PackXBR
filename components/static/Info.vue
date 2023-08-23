@@ -30,7 +30,6 @@
               <ul>
                 <li>Detail Image viewer (click to view big)</li>
                 <li>Optimize as scale</li>
-                <li>"Processing" placeholder (while waiting for current image to process)</li>
               </ul>
             </li>
             <li>Proper output-zip save name</li>
