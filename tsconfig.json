@@ -1,0 +1,9 @@
+{
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
+  "globals": {
+    "ImageMatrix": true,
+    "DumbFile": true,
+    "Image": true
+  }
+}

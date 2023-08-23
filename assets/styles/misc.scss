@@ -1,0 +1,28 @@
+// dark!
+:root {
+  color-scheme: dark;
+  background: linear-gradient(#4b0000 0%, #180000 20%);
+}
+
+// font
+body {
+  font-family: sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+// logical sizing
+* { box-sizing: border-box; }
+
+// no default margins
+h1, h2, h3, h4, h5, h6, p, span, a, strong, em, blockquote, cite, q, abbr, del, ins, mark, sub, sup, code, pre, kbd, var, samp, ol, ul {
+  margin: unset;
+}
+
+// NN upscaling for pixel art
+.pixel, body > .viewer-container > .viewer-canvas > img {
+  image-rendering: pixelated;
+}
