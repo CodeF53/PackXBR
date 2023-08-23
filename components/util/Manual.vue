@@ -47,8 +47,28 @@ function cycleTileOption(direction: TileDirection) {
   const currentSetting = settings.value.tile[direction]
   settings.value.tile[direction] = tileOptions[(tileOptions.indexOf(currentSetting) + 1) % tileOptions.length]
 }
+
+// TODO: redo preset system in a way that:
+// - switches the preset dropdown to active preset when user manually changes tile
+// - preset dropdown displays "Custom"
+// - doesn't require JSON.stringify
+// - is cleaner
+const tilePresets: { name: string; value: TileSettings }[] = [
+  { name: 'Block', value: { n: 'wrap', s: 'wrap', e: 'wrap', w: 'wrap' } },
+  { name: 'Plant', value: { n: 'void', s: 'mirror', e: 'void', w: 'void' } },
+  { name: 'Item', value: { n: 'void', s: 'void', e: 'void', w: 'void' } },
+]
 function cycleTilePreset(offset: number) {
-  // TODO
+  // find the current preset in a way that is safe because comparing objects is STUPID
+  const tilePresetValues = tilePresets.map(a => a.value)
+  let presetIndex = 0
+  tilePresetValues.forEach((preset, i) => {
+    if (JSON.stringify(preset) === JSON.stringify(settings.value.tile))
+      presetIndex = i
+  })
+  const newPresetIndex = (presetIndex + offset + tilePresetValues.length) % tilePresetValues.length
+
+  settings.value.tile = { ...tilePresetValues[newPresetIndex] }
 }
 
 function hotkey(e: KeyboardEvent) {
@@ -98,20 +118,34 @@ function hotkey(e: KeyboardEvent) {
 }
 onBeforeMount(() => document.addEventListener('keydown', hotkey))
 onBeforeUnmount(() => document.removeEventListener('keydown', hotkey))
+
+const tooltips = {
+  preset: 'changes all 4 edge modes at once',
+  relayer: 'un-rounds corners, useful for models/entities',
+  cullTranslucent: 'remove pixels that are translucent, (Highly Recommended)',
+  wrap: 'changes how the processor treats whats "outside" the edge of this dropdown',
+  back: 'goes to previous image, undoing your prior settings for it',
+  next: 'goes to next image, saving result (right image)',
+  skip: 'goes to next image, saving source (left image)',
+}
 </script>
 
 <template>
   <!-- TODO: tooltips -->
   <div id="manual" class="col gap2">
     <div id="settingHeader" class="row gap4">
-      <span>TODO: presets</span>
-      <LabeledInput v-model="settings.relayer" name="relayer" label="relayer" type="checkbox" />
-      <LabeledInput v-model="settings.cullTranslucent" name="cullTranslucent" label="cullTranslucent" type="checkbox" />
+      <select v-model="settings.tile" :title="tooltips.preset">
+        <option v-for="preset in tilePresets" :key="preset.name" :value="preset.value">
+          {{ preset.name }}
+        </option>
+      </select>
+      <LabeledInput v-model="settings.relayer" :title="tooltips.relayer" name="relayer" label="relayer" type="checkbox" />
+      <LabeledInput v-model="settings.cullTranslucent" :title="tooltips.cullTranslucent" name="cullTranslucent" label="cullTranslucent" type="checkbox" />
     </div>
     <div class="row spaceBetween gap2">
       <div id="inputContainer">
         <canvas ref="inputCanvas" class="pixel" />
-        <select v-for="direction in tileDirections" :key="direction" v-model="settings.tile[direction]" :class="direction">
+        <select v-for="direction in tileDirections" :key="direction" v-model="settings.tile[direction]" :title="tooltips.wrap" :class="direction">
           <option v-for="value in tileOptions" :key="value" :value="value">
             {{ value }}
           </option>
@@ -128,14 +162,14 @@ onBeforeUnmount(() => document.removeEventListener('keydown', hotkey))
       <progress :value="progress + 1" :max="progressMax" />
       <span>{{ progress + 1 }} / {{ progressMax }}</span>
       <div class="spacer" />
-      <button :disabled="progress === 0" @click="prev()">
+      <button :title="tooltips.back" :disabled="progress === 0" @click="prev()">
         back
       </button>
-      <button @click="next(image)">
+      <button :title="tooltips.skip" @click="next(image)">
         skip
       </button>
       <!-- I would add :disabled="!processedImage", but that leads to a re-render loop -->
-      <button @click="processedImage && next(processedImage)">
+      <button :title="tooltips.next" @click="processedImage && next(processedImage)">
         next
       </button>
     </div>
