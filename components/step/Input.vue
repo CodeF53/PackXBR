@@ -82,7 +82,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="col gap2 centerChildren">
-    <span>Drop images or zip here</span>
     <StaticLogo :class="{ showBox: hasFiles, fileDrag }" @click="$refs.input.click()" />
     <input ref="input" type="file" accept=".zip,.png" multiple @change="handleFileInput">
     <span>{{ selectedText }}</span>

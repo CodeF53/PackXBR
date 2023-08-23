@@ -60,6 +60,7 @@ defineProps(['class'])
 #logo {
   width: 22rem;
   height: 22rem;
+  margin-bottom: 1rem;
 
   // prevent seams when moving by adding a thin outline
   path {

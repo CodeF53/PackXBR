@@ -11,6 +11,7 @@ onMounted(() => updateValue('threads', Math.max(navigator.hardwareConcurrency - 
 </script>
 
 <template>
+  <StaticLogo class="showBox" />
   <div class="col gap2">
     <div class="row gap2">
       <div class="col spaceEvenly">

@@ -22,23 +22,13 @@
         <li title="currently errors during processing are ignored, and images are reverted to their original texture, add feedback">
           Error feedback & Handling
         </li>
-        <li>
-          Functionality from original
-          <ul>
-            <li title="instead of waiting until all images have been done in manual mode before optimizing, we could optimize images as they are completed. This is difficult as it could introduce a lot of race conditions">
-              Optimize while in manual mode (very hard)
-            </li>
-            <li>Proper output-zip save name</li>
-          </ul>
+        <li title="instead of waiting until all images have been done in manual mode before optimizing, we could optimize images as they are completed. This is difficult as it could introduce a lot of race conditions">
+          Optimize while in manual mode (very hard)
         </li>
-        <li>
-          UI changes from Misterk
-          <ul>
-            <li>Color-changing progress bars</li>
-            <li>Persistent Logo</li>
-            <li>Other shit</li>
-          </ul>
-        </li>
+        <li>Proper output-zip save name</li>
+        <li>Upload icon in logo during input step</li>
+        <li>Bigger & cooler button layouts</li>
+        <li>Misc Eye Candy</li>
       </ul>
     </details>
   </main>

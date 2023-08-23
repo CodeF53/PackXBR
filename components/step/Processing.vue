@@ -157,10 +157,14 @@ onMounted(loadFiles)
     :progress="progress"
     :progress-max="progressMax"
   />
-  <div v-else class="col gap1 centerChildren">
-    <h2>{{ stage }}</h2>
-    <progress v-if="dumbProgressBar" />
-    <progress v-else :value="progress" :max="progressMax" />
-    <span>{{ progress }} / {{ progressMax }}</span>
-  </div>
+  <template v-else>
+    <StaticLogo class="showBox" />
+
+    <div class="col gap1 centerChildren">
+      <h2>{{ stage }}</h2>
+      <progress v-if="dumbProgressBar" />
+      <progress v-else :value="progress" :max="progressMax" />
+      <span>{{ progress }} / {{ progressMax }}</span>
+    </div>
+  </template>
 </template>
