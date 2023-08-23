@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import LabeledInput from './LabeledInput.vue'
 import { process } from '~/utils/image/process'
 import { createContext, setImageData } from '~/utils/image/canvas'
@@ -23,25 +24,23 @@ const settings: Ref<ProcessSettings> = ref({
 
 const inputCanvas: Ref<HTMLCanvasElement | undefined> = ref()
 const processCanvas: Ref<HTMLCanvasElement | undefined> = ref()
+let inputCtx: CanvasRenderingContext2D
+let processCtx: CanvasRenderingContext2D
+onMounted(() => { // init rendering context on mount
+  inputCtx = createContext(inputCanvas.value)
+  processCtx = createContext(processCanvas.value)
+})
+
 const processedImage: Ref<Image | undefined> = ref()
-async function processImage() {
-  processedImage.value = undefined
-
-  if (!(inputCanvas.value && processCanvas.value))
-    return
-  const inputCtx = createContext(inputCanvas.value)
+async function draw() {
   setImageData(inputCtx, props.image.data)
-
-  processedImage.value = {
-    name: props.image.name,
-    data: await process(props.image.data, props.scaleFactor, settings.value),
-  }
-
-  const processCtx = createContext(processCanvas.value)
-  setImageData(processCtx, processedImage.value.data)
+  // TODO: fix freezing here with big images
+  const procData = await process(props.image.data, props.scaleFactor, settings.value)
+  setImageData(processCtx, procData)
+  processedImage.value = { name: props.image.name, data: procData }
 }
-onMounted(processImage)
-onBeforeUpdate(processImage)
+onMounted(draw)
+onUpdated(draw)
 
 function cycleTileOption(direction: TileDirection) {
   const currentSetting = settings.value.tile[direction]
@@ -49,8 +48,6 @@ function cycleTileOption(direction: TileDirection) {
 }
 
 // TODO: redo preset system in a way that:
-// - switches the preset dropdown to active preset when user manually changes tile
-// - preset dropdown displays "Custom"
 // - doesn't require JSON.stringify
 // - is cleaner
 const tilePresets: { name: string; value: TileSettings }[] = [
@@ -137,6 +134,9 @@ const tooltips = {
       <select v-model="settings.tile" :title="tooltips.preset">
         <option v-for="preset in tilePresets" :key="preset.name" :value="preset.value">
           {{ preset.name }}
+        </option>
+        <option :value="settings.tile">
+          Custom
         </option>
       </select>
       <LabeledInput v-model="settings.relayer" :title="tooltips.relayer" name="relayer" label="relayer" type="checkbox" />
