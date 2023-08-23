@@ -21,3 +21,16 @@ body {
 h1, h2, h3, h4, h5, h6, p, span, a, strong, em, blockquote, cite, q, abbr, del, ins, mark, sub, sup, code, pre, kbd, var, samp, ol, ul {
   margin: unset;
 }
+
+// NN upscaling for pixel art
+.pixel { image-rendering: pixelated; }
+
+// custom inputs
+input, select, button {
+  border: unset;
+  border-radius: .5rem;
+  &:disabled { background-color: #161616; }
+  background-color: #1f1f1f;
+  &:hover { background-color: #282828; }
+  &:active { background-color: #313131; }
+}

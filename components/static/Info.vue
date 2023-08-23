@@ -33,7 +33,6 @@
                 <li>"Processing" placeholder (while waiting for current image to process)</li>
                 <li>Presets</li>
                 <li>Tooltips</li>
-                <li>CSS</li>
               </ul>
             </li>
             <li>Proper output-zip save name</li>

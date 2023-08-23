@@ -12,6 +12,7 @@ const props = defineProps<{
   progressMax: number
 }>()
 
+const tileDirections: TileDirection[] = ['n', 's', 'e', 'w']
 const tileOptions: TileOption[] = ['void', 'wrap', 'extend', 'mirror']
 const settings: Ref<ProcessSettings> = ref({
   tile: { n: 'void', s: 'void', e: 'void', w: 'void' },
@@ -101,48 +102,31 @@ onBeforeUnmount(() => document.removeEventListener('keydown', hotkey))
 
 <template>
   <!-- TODO: tooltips -->
-  <div class="col gap2">
+  <div id="manual" class="col gap2">
     <div id="settingHeader" class="row gap4">
       <span>TODO: presets</span>
       <LabeledInput v-model="settings.relayer" name="relayer" label="relayer" type="checkbox" />
       <LabeledInput v-model="settings.cullTranslucent" name="cullTranslucent" label="cullTranslucent" type="checkbox" />
     </div>
     <div class="row spaceBetween gap2">
-      <div class="col centerChildren">
-        <select v-model="settings.tile.n">
-          <option v-for="value in tileOptions" :key="value" :value="value">
-            {{ value }}
-          </option>
-        </select>
-        <div class="row centerChildren">
-          <select v-model="settings.tile.w">
-            <option v-for="value in tileOptions" :key="value" :value="value">
-              {{ value }}
-            </option>
-          </select>
-          <canvas ref="inputCanvas" />
-          <select v-model="settings.tile.e">
-            <option v-for="value in tileOptions" :key="value" :value="value">
-              {{ value }}
-            </option>
-          </select>
-        </div>
-        <select v-model="settings.tile.s">
+      <div id="inputContainer">
+        <canvas ref="inputCanvas" class="pixel" />
+        <select v-for="direction in tileDirections" :key="direction" v-model="settings.tile[direction]" :class="direction">
           <option v-for="value in tileOptions" :key="value" :value="value">
             {{ value }}
           </option>
         </select>
       </div>
-      <div class="col">
-        <canvas ref="processCanvas" />
-        <p id="pathTextContainer" class="centered">
-          <span id="pathText">{{ image.name }}</span>
+      <div id="outputContainer">
+        <canvas ref="processCanvas" class="pixel" />
+        <p id="pathContainer">
+          <span id="path">{{ image.name }}</span>
         </p>
       </div>
     </div>
     <div class="row gap2 centerChildren">
-      <progress :value="progress" :max="progressMax" />
-      <span>{{ progress }} / {{ progressMax }}</span>
+      <progress :value="progress + 1" :max="progressMax" />
+      <span>{{ progress + 1 }} / {{ progressMax }}</span>
       <div class="spacer" />
       <button :disabled="progress === 0" @click="prev()">
         back
@@ -158,3 +142,58 @@ onBeforeUnmount(() => document.removeEventListener('keydown', hotkey))
     <StaticManualKeybinds />
   </div>
 </template>
+
+<style lang="scss">
+#manual {
+  --size: min(22.5rem, 50vh, calc(50vw - 4rem));
+  #inputContainer, #outputContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    min-width: var(--size);
+    min-height: var(--size);
+    max-width: var(--size);
+    max-height: var(--size);
+
+    & > canvas {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    &#inputContainer > select {
+      position: absolute;
+      &.n { top:    0 }
+      &.s { bottom: 0 }
+      &.e { left:   0 }
+      &.w { right:  0 }
+
+      // ensure visibility of text and image behind it
+      background: rgba($color: #1f1f1f, $alpha: .5);
+      > * { background: #1f1f1f; }
+      text-shadow: black 0 0 4px, black 0 0 4px, black 0 0 4px, black 0 0 4px, black 0 0 4px;
+    }
+
+    &#outputContainer > #pathContainer {
+      position: absolute;
+      bottom: 0px;
+      width: 100%;
+
+      // convoluted way of cutting of the left side of text
+      overflow: hidden;
+      text-overflow: ellipsis;
+      direction: rtl;
+      #path {
+        direction: ltr;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+</style>
