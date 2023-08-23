@@ -3,7 +3,7 @@ import replaceWorkerImportMetaUrl from 'rollup-plugin-replace-worker-import-meta
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
-  css: ['~/assets/styles/layout.scss', '~/assets/styles/misc.scss'],
+  css: ['~/assets/styles/layout.scss', '~/assets/styles/misc.scss', '~/assets/styles/components.scss'],
 
   build: { transpile: ['@jsquash/png', '@jsquash/oxipng'] },
   vite: {

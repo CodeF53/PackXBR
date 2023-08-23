@@ -1,0 +1,41 @@
+:root {
+  // colors
+  @for $i from 0 through 4 {
+    $v: 20 + $i * 10;
+    --elv#{$i}: #{rgb($v, $v, $v)};
+  }
+  --accent: #ff1616;
+
+  --border-radius: .5rem;
+
+  // progress and input[type=range]
+  --bar-background: var(--elv0);
+  --bar-height: .5rem;
+  --bar-width: 10rem;
+}
+
+input, select, button {
+  border: unset;
+  border-radius: var(--border-radius);
+  &:disabled { background-color: var(--elv0); }
+  background-color: var(--elv1);
+  &:hover { background-color: var(--elv2); }
+  &:active { background-color: var(--elv3); }
+}
+
+// custom progressbar
+progress {
+  // background
+  &, &::-webkit-progress-bar {
+    background-color: var(--bar-background);
+    border: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    height: var(--bar-height);
+    width: var(--bar-width);
+  }
+
+  // the bit that slides
+  &::-moz-progress-bar      { background-color: var(--accent); }
+  &::-webkit-progress-value { background-color: var(--accent); }
+}

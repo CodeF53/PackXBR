@@ -34,10 +34,10 @@ onMounted(() => updateValue('threads', Math.max(navigator.hardwareConcurrency - 
     </div>
     <div v-if="$props.options.auto" class="col">
       <label>Threads {{ $props.options.threads }} / {{ maxThreads }}</label>
-      <input
-        type="range" min="1" :max="maxThreads" :value="$props.options.threads"
-        @change="(e) => updateValue('threads', e.target.value)"
-      >
+      <UtilRange
+        :min="1" :max="maxThreads" :model-value="$props.options.threads"
+        @change="(e) => updateValue('threads', Number(e.target.value))"
+      />
     </div>
     <div class="row gap1">
       <label for="optimize">Optimize</label>
