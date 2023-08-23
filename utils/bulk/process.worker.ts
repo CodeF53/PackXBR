@@ -1,4 +1,3 @@
-import pLimit from 'p-limit'
 import { initialize as initXBRZ } from '~/utils/image/xbrz'
 import { processAuto } from '~/utils/image/process'
 
@@ -10,14 +9,15 @@ globalThis.onmessage = async (event) => {
   await initXBRZ()
 
   // process every Image in array
-  const limit = pLimit(8)
-  const arrayResults = await Promise.all(
-    array.map(async (img: Image) => await limit(async () => {
-      const imageData = await processAuto(img, scaleFactor)
-      globalThis.postMessage({ type: 'update' })
-      return { name: img.name, data: imageData }
-    })),
-  )
+  // TODO: re-introduce Promise.all & p-limit
+  // removed because it made data go into the wrong images
+  // scaling `acacia_chest_boat.png` to `bamboo.png` on a single thread lead to everything being bamboo
+  const arrayResults = Array(array.length)
+  for (let i = 0; i < array.length; i++) {
+    const img = array[i]
+    const imageData = await processAuto(img, scaleFactor)
+    arrayResults[i] = { name: img.name, data: imageData }
+  }
 
   // Send the results back to the main thread
   globalThis.postMessage({ type: 'done', data: arrayResults })
