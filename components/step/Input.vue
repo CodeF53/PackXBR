@@ -2,7 +2,7 @@
 import JSZip from 'jszip'
 
 defineProps(['files'])
-const emit = defineEmits(['update:files', 'next'])
+const emit = defineEmits(['update:files', 'update:outputName', 'next'])
 
 const fileDrag = ref(false)
 const selectedText = ref('No files selected')
@@ -41,6 +41,14 @@ async function handleFiles(fileList) {
 
   // broadcast new files
   emit('update:files', files)
+
+  // determine and broadcast outputName
+  let outputName = 'images._' // ._ is to make the file extension remover not break
+  if (zipFile)
+    outputName = zipFile.name
+  else if (images.length === 1)
+    outputName = images[0].name
+  emit('update:outputName', outputName.split('.').slice(0, -1).join('.'))
 }
 const handleFileInput = e => handleFiles([...e.target.files])
 function handleFileDrop(e) {

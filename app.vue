@@ -7,6 +7,7 @@ const options = ref({
   auto: true,
   threads: 1, // updated to navigator.hardwareConcurrency - 2 inside StepOptions
   optimize: true,
+  outputName: 'images',
 })
 
 function next() {
@@ -30,7 +31,7 @@ function next() {
 
     <StepInput
       v-if="state === 'input'"
-      v-model:files="files" @next="next()"
+      v-model:files="files" v-model:outputName="options.outputName" @next="next()"
     />
     <StepOptions
       v-else-if="state === 'options'"

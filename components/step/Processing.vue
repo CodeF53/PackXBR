@@ -111,6 +111,8 @@ async function optimizeImages() {
 
 async function saveResult() {
   const files = [...nonImages.value, ...optimizedImages.value]
+  const outputName = `${props.options.outputName}-${props.options.scale}xBR`
+
   if (files.length > 1) {
     // update display
     stage.value = 'Compressing'
@@ -132,13 +134,13 @@ async function saveResult() {
     // save zip
     stage.value = 'Saving'
     dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
-    saveBlob(await zip.generateAsync({ type: 'blob' }), 'tempName.zip')
+    saveBlob(await zip.generateAsync({ type: 'blob' }), `${outputName}.zip`)
   }
   else {
     // save image
     stage.value = 'Saving'
     dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
-    saveBlob(new Blob([files[0].data]), files[0].name)
+    saveBlob(new Blob([files[0].data]), `${outputName}.png`)
   }
   // move to Complete page
   emit('next')
@@ -163,8 +165,10 @@ onMounted(loadFiles)
     <div class="col gap1 centerChildren">
       <h2>{{ stage }}</h2>
       <progress v-if="dumbProgressBar" />
-      <progress v-else :value="progress" :max="progressMax" />
-      <span>{{ progress }} / {{ progressMax }}</span>
+      <template v-else>
+        <progress :value="progress" :max="progressMax" />
+        <span>{{ progress }} / {{ progressMax }}</span>
+      </template>
     </div>
   </template>
 </template>
