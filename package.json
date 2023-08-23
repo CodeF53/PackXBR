@@ -15,7 +15,8 @@
     "@jsquash/png": "^2.1.2",
     "jszip": "^3.10.1",
     "p-limit": "^4.0.0",
-    "sass": "^1.63.6"
+    "sass": "^1.63.6",
+    "viewerjs": "^1.11.4"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.8",

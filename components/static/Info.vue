@@ -25,12 +25,8 @@
         <li>
           Functionality from original
           <ul>
-            <li>
-              Manual processor
-              <ul>
-                <li>Detail Image viewer (click to view big)</li>
-                <li>Optimize as scale</li>
-              </ul>
+            <li title="instead of waiting until all images have been done in manual mode before optimizing, we could optimize images as they are completed. This is difficult as it could introduce a lot of race conditions">
+              Optimize while in manual mode (very hard)
             </li>
             <li>Proper output-zip save name</li>
           </ul>

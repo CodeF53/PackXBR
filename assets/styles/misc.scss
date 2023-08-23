@@ -23,7 +23,9 @@ h1, h2, h3, h4, h5, h6, p, span, a, strong, em, blockquote, cite, q, abbr, del, 
 }
 
 // NN upscaling for pixel art
-.pixel { image-rendering: pixelated; }
+.pixel, body > .viewer-container > .viewer-canvas > img {
+  image-rendering: pixelated;
+}
 
 // custom inputs
 input, select, button {

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import Viewer from 'viewerjs'
+import 'viewerjs/dist/viewer.min.css'
 import LabeledInput from './LabeledInput.vue'
 import ProcessWorker from '~/utils/image/process.worker?worker'
 import { createContext, setImageData } from '~/utils/image/canvas'
@@ -84,6 +85,42 @@ async function draw() {
 onMounted(draw)
 onUpdated(draw)
 
+const viewerImg: HTMLImageElement = document.createElement('img')
+let viewer: Viewer
+onMounted(() => {
+  viewer = new Viewer(viewerImg, {
+    navbar: false,
+    title: false,
+    toolbar: {
+      zoomIn: true,
+      zoomOut: true,
+      oneToOne: true,
+      reset: true,
+      rotateLeft: true,
+      rotateRight: true,
+      flipHorizontal: true,
+      flipVertical: true,
+      prev: false,
+      play: false,
+      next: false,
+    },
+  })
+  document.body.appendChild(viewerImg)
+})
+onBeforeUnmount(() => {
+  viewerImg.remove()
+  viewer.destroy()
+})
+function clickEventViewCanvas(e: MouseEvent) {
+  if (e.target)
+    viewCanvas(e.target as HTMLCanvasElement)
+}
+function viewCanvas(canvas: HTMLCanvasElement) {
+  viewerImg.src = canvas.toDataURL()
+  viewer.show()
+  viewer.update()
+}
+
 function cycleTileOption(direction: TileDirection) {
   const currentSetting = settings.value.tile[direction]
   settings.value.tile[direction] = tileOptions[(tileOptions.indexOf(currentSetting) + 1) % tileOptions.length]
@@ -112,8 +149,8 @@ function cycleTilePreset(offset: number) {
 
 function hotkey(e: KeyboardEvent) {
   // disable hotkeys while viewer is open
-  // if (viewer.fulled)
-  //   return
+  if (viewer.isShown)
+    return
 
   const { key, ctrlKey, shiftKey } = e
 
@@ -185,7 +222,7 @@ const tooltips = {
     </div>
     <div class="row spaceBetween gap2">
       <div id="inputContainer">
-        <canvas ref="inputCanvas" class="pixel" />
+        <canvas ref="inputCanvas" class="pixel" @click="clickEventViewCanvas" />
         <select v-for="direction in tileDirections" :key="direction" v-model="settings.tile[direction]" :title="tooltips.wrap" :class="direction">
           <option v-for="value in tileOptions" :key="value" :value="value">
             {{ value }}
@@ -193,7 +230,7 @@ const tooltips = {
         </select>
       </div>
       <div id="outputContainer">
-        <canvas ref="processCanvas" class="pixel" />
+        <canvas ref="processCanvas" class="pixel" @click="clickEventViewCanvas" />
         <p id="pathContainer">
           <span id="path">{{ image.name }}</span>
         </p>
