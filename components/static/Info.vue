@@ -33,7 +33,6 @@
               </ul>
             </li>
             <li>Proper output-zip save name</li>
-            <li>Proper Favicon</li>
           </ul>
         </li>
         <li>
