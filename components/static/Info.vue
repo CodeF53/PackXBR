@@ -13,7 +13,7 @@
         Losslessly optimizes the outputted images using <a href="https://github.com/shssoichiro/oxipng">OxiPNG</a>.
       </span>
       <span>
-        Designed for development of Minecraft resource packs in the <a href="modrinth.com/resourcepack/VanillaXBR">VanillaXBR</a> ecosystem
+        Designed for development of Minecraft resource packs in the <a href="https://modrinth.com/resourcepack/VanillaXBR">VanillaXBR</a> ecosystem
       </span>
     </p>
     <details>
