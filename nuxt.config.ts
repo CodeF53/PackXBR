@@ -31,7 +31,7 @@ export default defineNuxtConfig({
         // twitter stuff
         { property: 'og:title', content: 'PackXBR' },
         { property: 'og:description', content: 'Bulk Pixel Art Upscaler' },
-        { property: 'og:image', content: 'https://cdn.discordapp.com/attachments/821452669771972608/1143767310360916008/favicon.png' },
+        { property: 'og:image', content: 'https://cdn.discordapp.com/attachments/821448645693276230/1144367698181099520/android-chrome-512x512.png' },
         { name: 'twitter:card', content: 'summary' },
         { name: 'twitter:site', content: '@CodeF53' },
         { name: 'twitter:creator', content: '@CodeF53' },
