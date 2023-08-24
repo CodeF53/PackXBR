@@ -25,9 +25,6 @@
         <li title="instead of waiting until all images have been done in manual mode before optimizing, we could optimize images as they are completed. This is difficult as it could introduce a lot of race conditions">
           Optimize while in manual mode (very hard)
         </li>
-        <li title="during saving, I switch to <progress> with no value/max, giving one that implies movement without any actual movement. Custom progressbar css breaks that">
-          Fix dumb Progress Bar
-        </li>
         <li>Upload icon in logo during input step</li>
         <li>Bigger & cooler button layouts</li>
         <li>Misc Eye Candy</li>

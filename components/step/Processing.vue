@@ -14,7 +14,7 @@ const emit = defineEmits(['next'])
 
 const stage = ref('')
 
-const dumbProgressBar: Ref<boolean> = ref(false)
+const indeterminateProgress: Ref<boolean> = ref(false)
 const progress: Ref<number> = ref(0)
 const progressMax: Ref<number> = ref(0)
 const iterProgress = () => progress.value++
@@ -133,13 +133,13 @@ async function saveResult() {
 
     // save zip
     stage.value = 'Saving'
-    dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
+    indeterminateProgress.value = true // switch progressbar to one that implies movement but doesn't show progress
     saveBlob(await zip.generateAsync({ type: 'blob' }), `${outputName}.zip`)
   }
   else {
     // save image
     stage.value = 'Saving'
-    dumbProgressBar.value = true // switch progressbar to one that implies movement but doesn't show progress
+    indeterminateProgress.value = true // switch progressbar to one that implies movement but doesn't show progress
     saveBlob(new Blob([files[0].data]), `${outputName}.png`)
   }
   // move to Complete page
@@ -164,7 +164,7 @@ onMounted(loadFiles)
 
     <div class="col gap1 centerChildren">
       <h2>{{ stage }}</h2>
-      <progress v-if="dumbProgressBar" />
+      <progress v-if="indeterminateProgress" />
       <template v-else>
         <progress :value="progress" :max="progressMax" />
         <span>{{ progress }} / {{ progressMax }}</span>

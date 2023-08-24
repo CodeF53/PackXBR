@@ -38,4 +38,23 @@ progress {
   // the bit that slides
   &::-moz-progress-bar      { background-color: var(--accent); }
   &::-webkit-progress-value { background-color: var(--accent); }
+
+  // indeterminate state
+  &:not([value]) {
+    // 30% of the bar filled with accent, bouncing left and right
+    @mixin fill() {
+      background: linear-gradient(90deg, var(--accent) 30%, transparent 30%);
+      animation: bounce 1.75s linear infinite;
+    }
+    @keyframes bounce { 50% { translate: 70% 0 } }
+
+    &::-moz-progress-bar { @include fill() }
+    // you can't use animations in side of chrome's `-webkit-progress-value`, so we just use ::after
+    position: relative;
+    &::after {
+      content: ''; position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      @include fill();
+    }
+  }
 }
