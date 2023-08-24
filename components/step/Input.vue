@@ -4,7 +4,7 @@ import JSZip from 'jszip'
 defineProps(['files'])
 const emit = defineEmits(['update:files', 'update:outputName', 'next'])
 
-const fileDrag = ref(false)
+const activeSelect = ref(false)
 const selectedText = ref('No files selected')
 const hasFiles = ref(false)
 
@@ -60,12 +60,12 @@ function handleFilePaste(e) {
   if (files.length > 0)
     handleFiles(files)
 }
-const dragStart = () => fileDrag.value = true
+const dragStart = () => activeSelect.value = true
 function dragLeave(e) {
   if (e.explicitOriginalTarget.nodeName === 'BODY')
-    fileDrag.value = false
+    activeSelect.value = false
 }
-const dragEnd = () => fileDrag.value = false
+const dragEnd = () => activeSelect.value = false
 const prevent = e => e.preventDefault()
 onBeforeMount(() => {
   document.addEventListener('drop', handleFileDrop)
@@ -90,8 +90,12 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="col gap2 centerChildren">
-    <StaticLogo :class="{ showBox: hasFiles, fileDrag }" @click="$refs.input.click()" />
-    <input ref="input" type="file" accept=".zip,.png" multiple @change="handleFileInput">
+    <StaticLogo :class="{ showBox: hasFiles, activeSelect }" @click="$refs.input.click()" />
+    <input
+      ref="input" type="file" accept=".zip,.png" multiple
+      @change="handleFileInput"
+      @input="activeSelect = false" @click="activeSelect = true" @cancel="activeSelect = false"
+    >
     <span>{{ selectedText }}</span>
     <button :class="{ hidden: !hasFiles }" @click="$emit('next')">
       Next

@@ -79,7 +79,7 @@ defineProps(['class'])
 
   // smooth open/close for Mouse/File drop
   path, g { transition: translate 0.4s ease-out; }
-  &:not(.showBox):is(:hover, .fileDrag) {
+  &:not(.showBox):is(:hover, .activeSelect) {
     #topLight, #bottomLight { translate: 1rem 0px; }
     #topDark, #bottomDark { translate: -1rem 0px; }
   }
