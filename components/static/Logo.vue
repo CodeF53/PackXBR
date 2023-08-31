@@ -66,6 +66,8 @@ defineProps(['class'])
 #logo {
   width: 22rem;
   height: 22rem;
+  cursor: pointer;
+  // ^ added by misterk7_-. todo: disable when logo isn't interactable.
   margin-bottom: 1rem;
 
   // prevent seams when moving by adding a thin outline
