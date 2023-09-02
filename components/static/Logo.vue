@@ -68,6 +68,9 @@ defineProps(['class'])
   height: 22rem;
   margin-bottom: 1rem;
 
+  // imply interactivity through cursor when acting as an input
+  &.interactive { cursor: pointer; }
+
   // prevent seams when moving by adding a thin outline
   path {
     stroke-linecap: round;
