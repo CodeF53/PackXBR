@@ -3,6 +3,19 @@ import { createContext, setImageData } from '~/utils/image/canvas'
 export const isPNG = (file: File) => file.name.toLowerCase().endsWith('.png')
 export const isZIP = (file: File) => file.name.toLowerCase().endsWith('.zip')
 
+// processes error into a human readable string, then sends it to the main thread
+export function workerError(error: unknown, comment?: string, postComment?: string) {
+  let prefix = ''
+  if (comment)
+    prefix = `${comment}: `
+
+  let errorText = 'Unknown Error'
+  if (error && typeof error === 'object' && error.name)
+    errorText = `${error.name} - ${error.message}`
+
+  globalThis.postMessage({ error: `${prefix}${errorText}${postComment || ''}` })
+}
+
 // when @jsquash/png encode doesn't work, we need a fallback
 export async function alternateEncodePNG(imageData: ImageData): Promise<ArrayBuffer> {
   // put onto canvas

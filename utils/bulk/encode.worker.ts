@@ -17,7 +17,7 @@ globalThis.onmessage = async (event) => {
     data = await encodePNG(input.data)
   }
   catch (error) {
-    console.error(`error occurred while encoding ${input.name}, falling back on canvas encode`)
+    workerError(error, `While encoding "${input.name}"`, ' - falling back on canvas encode')
     data = await alternateEncodePNG(input.data)
   }
 

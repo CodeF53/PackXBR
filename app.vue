@@ -51,6 +51,7 @@ function next() {
     <StaticInfo />
 
     <StaticBackground />
+    <UtilErrors />
   </div>
 </template>
 

@@ -75,10 +75,13 @@ async function draw() {
   const currentProgress = props.progress
   worker.value.onmessage = ({ data }) => {
     // if we changed image since starting, toss result
-    if (props.progress === currentProgress) {
-      setImageData(processCtx, data)
-      processedImage.value = { name: props.image.name, data }
-    }
+    if (props.progress !== currentProgress)
+      return
+    if (data.error)
+      return console.error(`"${props.image.name}" - ${data.error}`)
+
+    setImageData(processCtx, data)
+    processedImage.value = { name: props.image.name, data }
   }
   worker.value.postMessage([toRaw(props.image.data), props.scaleFactor, toRaw(settings.value)])
 }

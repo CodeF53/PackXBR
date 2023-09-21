@@ -18,7 +18,7 @@ globalThis.onmessage = async (event) => {
     encoded = await encodePNG(input.data)
   }
   catch (error) {
-    console.error(`error occurred while encoding ${input.name}, falling back on canvas encode`)
+    workerError(error, `While encoding "${input.name}"`, ' - falling back on canvas encode')
     encoded = await alternateEncodePNG(input.data)
   }
 
@@ -28,7 +28,7 @@ globalThis.onmessage = async (event) => {
     optimized = await optimize(encoded, { optimiseAlpha: true })
   }
   catch (error) {
-    console.error(`error occurred while optimizing ${input.name}, falling back on default encode`)
+    workerError(error, `While optimizing "${input.name}"`, ' - skipping optimization step')
     optimized = encoded
   }
 

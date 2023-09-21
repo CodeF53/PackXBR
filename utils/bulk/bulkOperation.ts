@@ -7,7 +7,10 @@ export default async function bulkOperation(array: any[], WorkerConstructor: new
   const outData: unknown[] = []
 
   return new Promise((resolve, _reject) => {
-    workers.forEach(worker => worker.onmessage = (event: { data: { data?: unknown } }) => {
+    workers.forEach(worker => worker.onmessage = (event: { data: { error?: string; data?: unknown } }) => {
+      if (event.data.error)
+        return console.error(event.data.error)
+
       // if we got data, save it & push to target array
       if (event.data.data) {
         iterProgress()

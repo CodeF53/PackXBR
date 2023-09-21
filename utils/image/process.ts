@@ -28,15 +28,15 @@ export function processAuto(image: Image, scaleFactor: number, settings?: Proces
   if (settings === undefined)
     settings = getSettings(image.name)
 
-  if (image.data.width > 2048 || image.data.height > 2048)
-    throw new Error('image too big 😭')
-
   return process(image.data, scaleFactor, settings)
 }
 
 export async function process(imageData: ImageData, scaleFactor: number, settings: ProcessSettings) {
   if (settings.skip)
     return imageData
+
+  if (imageData.width > 2048 || imageData.height > 2048)
+    throw new Error('image too big')
 
   const shouldCull: boolean = settings.cullTranslucent ? !containsTranslucent(imageData) : false
   const tileDistance: number = Math.min(scaleFactor, imageData.width, imageData.height)

@@ -17,7 +17,7 @@ globalThis.onmessage = async (event) => {
     imageData = await processAuto(input, scaleFactor)
   }
   catch (error) {
-    console.error(`error occurred while processing ${input.name} falling back on unscaled texture`)
+    workerError(error, `While processing "${input.name}"`, ' - skipping image')
     imageData = input.data
   }
 
