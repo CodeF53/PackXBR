@@ -56,8 +56,9 @@ function next() {
 
 <style>
   #app {
-    min-height: calc(100vh - 3rem);
+    min-height: calc(100vh - 2.5rem);
+    max-width: calc(100vw - 1rem);
     margin-top: 2rem;
-    margin-bottom: 1rem;
+    margin-bottom: .5rem;
   }
 </style>
