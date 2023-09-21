@@ -41,7 +41,8 @@ onBeforeUnmount(() => {
       display: block;
       font-family: monospace;
       color: red;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(0.5rem);
     }
   }
 }

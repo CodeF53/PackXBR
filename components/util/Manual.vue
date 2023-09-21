@@ -78,7 +78,7 @@ async function draw() {
     if (props.progress !== currentProgress)
       return
     if (data.error)
-      return console.error(`"${props.image.name}" - ${data.error}`)
+      return console.error(`"${props.image.name}" - ${data.error} - skipping image`)
 
     setImageData(processCtx, data)
     processedImage.value = { name: props.image.name, data }
