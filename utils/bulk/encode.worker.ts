@@ -1,23 +1,19 @@
 import { encode as encodePNG } from '@jsquash/png'
 import { init as initEncode } from '@jsquash/png/encode'
-import pLimit from 'p-limit'
 
+// on creation, init needed shit
+initEncode().then(() => {
+  // when everything is ready, tell main thread we are initialized
+  globalThis.postMessage({})
+}).catch(console.error)
+
+// on message, process data
 globalThis.onmessage = async (event) => {
-  const { array } = event.data
+  const { input } = event.data
 
-  // init needed wasm modules
-  await initEncode()
+  // encode image data to PNG format
+  const data = await encodePNG(input.data)
 
-  // optimize every Image in array
-  const limit = pLimit(8)
-  const arrayResults = await Promise.all(
-    array.map(async (img: Image) => await limit(async () => {
-      const out = { name: img.name, data: await encodePNG(img.data) }
-      globalThis.postMessage({ type: 'update' })
-      return out
-    })),
-  )
-
-  // Send the results back to the main thread
-  globalThis.postMessage({ type: 'done', data: arrayResults })
+  // Send the result back to the main thread
+  globalThis.postMessage({ data: { name: input.name, data } })
 }
