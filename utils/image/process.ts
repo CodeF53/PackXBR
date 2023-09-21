@@ -28,6 +28,9 @@ export function processAuto(image: Image, scaleFactor: number, settings?: Proces
   if (settings === undefined)
     settings = getSettings(image.name)
 
+  if (image.data.width > 2048 || image.data.height > 2048)
+    throw new Error('image too big 😭')
+
   return process(image.data, scaleFactor, settings)
 }
 

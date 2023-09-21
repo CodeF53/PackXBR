@@ -1,5 +1,18 @@
+import { createContext, setImageData } from '~/utils/image/canvas'
+
 export const isPNG = (file: File) => file.name.toLowerCase().endsWith('.png')
 export const isZIP = (file: File) => file.name.toLowerCase().endsWith('.zip')
+
+// when @jsquash/png encode doesn't work, we need a fallback
+export async function alternateEncodePNG(imageData: ImageData): Promise<ArrayBuffer> {
+  // put onto canvas
+  const ctx = createContext()
+  setImageData(ctx, imageData)
+  // canvas => blob => arrayBuffer
+  return new Promise((resolve, _reject) => {
+    ctx.canvas.toBlob(async blob => resolve(await blob!.arrayBuffer()))
+  })
+}
 
 export function saveBlob(blob: Blob, fileName: string) {
   // create a URL for the blob

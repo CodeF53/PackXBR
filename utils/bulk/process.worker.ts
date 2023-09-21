@@ -9,10 +9,17 @@ initXBRZ().then(() => {
 
 globalThis.onmessage = async (event) => {
   const { input, args } = event.data
+  const scaleFactor = args[0]
 
   // process img
-  const scaleFactor = args[0]
-  const imageData = await processAuto(input, scaleFactor)
+  let imageData
+  try {
+    imageData = await processAuto(input, scaleFactor)
+  }
+  catch (error) {
+    console.error(`error occurred while processing ${input.name} falling back on unscaled texture`)
+    imageData = input.data
+  }
 
   // Send the result back to the main thread
   globalThis.postMessage({ data: { name: input.name, data: imageData } })

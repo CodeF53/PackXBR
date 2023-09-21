@@ -11,8 +11,15 @@ initEncode().then(() => {
 globalThis.onmessage = async (event) => {
   const { input } = event.data
 
-  // encode image data to PNG format
-  const data = await encodePNG(input.data)
+  // encode to png
+  let data
+  try {
+    data = await encodePNG(input.data)
+  }
+  catch (error) {
+    console.error(`error occurred while encoding ${input.name}, falling back on canvas encode`)
+    data = await alternateEncodePNG(input.data)
+  }
 
   // Send the result back to the main thread
   globalThis.postMessage({ data: { name: input.name, data } })

@@ -13,9 +13,25 @@ globalThis.onmessage = async (event) => {
   const { input } = event.data
 
   // encode to png
-  const encoded = await encodePNG(input.data)
+  let encoded
+  try {
+    encoded = await encodePNG(input.data)
+  }
+  catch (error) {
+    console.error(`error occurred while encoding ${input.name}, falling back on canvas encode`)
+    encoded = await alternateEncodePNG(input.data)
+  }
+
   // optimize with oxi
-  const optimized = await optimize(encoded, { optimiseAlpha: true })
+  let optimized
+  try {
+    optimized = await optimize(encoded, { optimiseAlpha: true })
+  }
+  catch (error) {
+    console.error(`error occurred while optimizing ${input.name}, falling back on default encode`)
+    optimized = encoded
+  }
+
   // take whichever is smaller, oxi result, or encode result
   const outData = optimized.byteLength < encoded.byteLength ? optimized : encoded
 
