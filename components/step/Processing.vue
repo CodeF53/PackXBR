@@ -58,7 +58,7 @@ async function processImages() {
   // (if auto) process all images
   if (props.options.auto) {
     console.time('Process')
-    processedImages.value = await bulkOperation(toRaw(images.value), ProcessWorker, props.options.threads, iterProgress, props.options.scale)
+    processedImages.value = (await bulkOperation(toRaw(images.value), ProcessWorker, props.options.threads, iterProgress, props.options.scale)) as Image[]
     console.timeEnd('Process')
 
     // move to next step
