@@ -37,7 +37,7 @@ async function loadFiles() {
   const limit = pLimit(8)
   await Promise.all(props.files.map(async (file: File) => await limit(async () => {
     const data = await file.arrayBuffer()
-    if (isPNG(file))
+    if (isPNG(file) && !file.name.startsWith('__MACOSX'))
       images.value.push({ name: file.name, data: await decodePNG(data) })
     else
       nonImages.value.push({ name: file.name, data })
