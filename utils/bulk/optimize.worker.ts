@@ -20,7 +20,14 @@ globalThis.onmessage = async (event) => {
   }
   catch (error) {
     workerError(error, `While encoding "${input.name}"`, ' - falling back on canvas encode')
-    encoded = await alternateEncodePNG(input.data)
+    try {
+      encoded = await alternateEncodePNG(input.data)
+    }
+    catch (error) {
+      workerError(error, `While attempting canvas encode on ${input.name}`, 'skipping image because its dumb and stupid')
+      globalThis.postMessage({ data: { error: `${input.name} is dumb and refuses to encode for both JSquash and Canvas encoding` } })
+      return
+    }
   }
 
   // optimize with oxi
