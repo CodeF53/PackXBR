@@ -1,5 +1,6 @@
 import { encode as encodePNG } from '@jsquash/png'
 import { init as initEncode } from '@jsquash/png/encode'
+import { workerError } from '~/utils/misc'
 
 // on creation, init needed shit
 initEncode().then(() => {

@@ -1,6 +1,7 @@
 // for use in manual mode
 import { initialize as initXBRZ } from '~/utils/image/xbrz'
 import { process } from '~/utils/image/process'
+import { workerError } from '~/utils/misc'
 
 globalThis.onmessage = async (event) => {
   if (event.data.init)

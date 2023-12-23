@@ -103,7 +103,7 @@ async function optimizeImages() {
     results = await bulkOperation(toRaw(processedImages.value), EncodeWorker, props.options.threads, iterProgress)
     console.timeEnd('Encode')
   }
-  optimizedImages.value = results
+  optimizedImages.value = results as DumbFile[]
 
   // move to next step
   saveResult()

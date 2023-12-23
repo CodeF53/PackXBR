@@ -1,5 +1,6 @@
 import { initialize as initXBRZ } from '~/utils/image/xbrz'
 import { processAuto } from '~/utils/image/process'
+import { workerError } from '~/utils/misc'
 
 // on creation, init needed shit
 initXBRZ().then(() => {
