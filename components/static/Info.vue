@@ -7,13 +7,23 @@
         A utility for upscaling pixel-art images using the xBR algorithm
       </span>
       <span>
-        Upscales images using the <a href="https://sourceforge.net/projects/xbrz/">xBRZ</a> scaling algorithm.
+        Upscales images using the
+        <a href="https://sourceforge.net/projects/xbrz/">xBRZ</a>
+        scaling algorithm.
       </span>
       <span>
-        Losslessly optimizes the outputted images using <a href="https://github.com/shssoichiro/oxipng">OxiPNG</a>.
+        Losslessly optimizes the outputted images using
+        <a href="https://github.com/shssoichiro/oxipng">OxiPNG</a>.
       </span>
       <span>
-        Designed for development of Minecraft resource packs in the <a href="https://modrinth.com/resourcepack/VanillaXBR">VanillaXBR</a> ecosystem
+        Designed for development of Minecraft resource packs in the
+        <a href="https://modrinth.com/resourcepack/VanillaXBR">VanillaXBR</a>
+        ecosystem
+      </span>
+      <span>
+        For support, join the
+        <a href="https://discord.com/invite/8N4xzej">VanillaXBR Discord server</a>
+        and ask in <code>#packxbr-discussion</code>
       </span>
     </p>
     <details>
