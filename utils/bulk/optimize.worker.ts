@@ -1,7 +1,6 @@
 import { init as initEncode } from '@jsquash/png/encode'
-import { encode as encodePNG } from '@jsquash/png'
 import optimize, { init as initOxiPNG } from '@jsquash/oxipng/optimise'
-import { workerError } from '~/utils/misc'
+import { safeEncodePNG, workerError } from '~/utils/misc'
 
 // on creation, init needed shit
 Promise.all([initOxiPNG(), initEncode()]).then(() => {
@@ -16,18 +15,12 @@ globalThis.onmessage = async (event) => {
   // encode to png
   let encoded
   try {
-    encoded = await encodePNG(input.data)
+    encoded = await safeEncodePNG(input.data)
   }
   catch (error) {
-    workerError(error, `While encoding "${input.name}"`, ' - falling back on canvas encode')
-    try {
-      encoded = await alternateEncodePNG(input.data)
-    }
-    catch (error) {
-      workerError(error, `While attempting canvas encode on ${input.name}`, 'skipping image because its dumb and stupid')
-      globalThis.postMessage({ data: { error: `${input.name} is dumb and refuses to encode for both JSquash and Canvas encoding` } })
-      return
-    }
+    workerError(error, `While attempting canvas encode on ${input.name}`, ' skipping image because its dumb and stupid')
+    globalThis.postMessage({ data: { error: `${input.name} is dumb and refuses to encode for both JSquash and Canvas encoding` } })
+    return
   }
 
   // optimize with oxi

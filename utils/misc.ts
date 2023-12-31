@@ -1,4 +1,5 @@
-import { createContext, setImageData } from '~/utils/image/canvas'
+import { decode as decodePNG, encode as encodePNG } from '@jsquash/png'
+import { createOffscreenContext, setImageData } from '~/utils/image/canvas'
 
 export const isPNG = (file: File) => file.name.toLowerCase().endsWith('.png')
 export const isZIP = (file: File) => file.name.toLowerCase().endsWith('.zip')
@@ -16,15 +17,36 @@ export function workerError(error: unknown, comment?: string, postComment?: stri
   globalThis.postMessage({ error: `${prefix}${errorText}${postComment || ''}` })
 }
 
-// when @jsquash/png encode doesn't work, we need a fallback
-export async function alternateEncodePNG(imageData: ImageData): Promise<ArrayBuffer> {
-  // put onto canvas
-  const ctx = createContext()
-  setImageData(ctx, imageData)
-  // canvas => blob => arrayBuffer
-  return new Promise((resolve, _reject) => {
-    ctx.canvas.toBlob(async blob => resolve(await blob!.arrayBuffer()))
-  })
+export async function safeEncodePNG(imageData: ImageData): Promise<ArrayBuffer> {
+  try { // try using @jsquash/png encode
+    return await encodePNG(imageData)
+  }
+  catch { // fall back on dumb canvas encode
+    // canvas => blob => arrayBuffer
+    const ctx = createOffscreenContext()
+    setImageData(ctx, imageData)
+    return (await ctx.canvas.convertToBlob()).arrayBuffer()
+  }
+}
+
+export async function safeDecodePNG(buffer: ArrayBuffer): Promise<ImageData> {
+  try { // try using @jsquash/png decode
+    return await decodePNG(buffer)
+  }
+  catch { // fall back on dumb canvas decode
+    // ArrayBuffer => Blob => URL => HTMLImageElement
+    const src = URL.createObjectURL(new Blob([buffer], { type: 'image/png' }))
+    const image = new Image()
+    image.src = src
+    await new Promise(resolve => image.onload = resolve)
+    // HTMLImageElement => Canvas => ImageData
+    const ctx = createOffscreenContext(image.width, image.height)
+    ctx.drawImage(image, 0, 0)
+    const imageData = ctx.getImageData(0, 0, image.width, image.height)
+    // Clean up URL
+    URL.revokeObjectURL(src)
+    return imageData
+  }
 }
 
 export function saveBlob(blob: Blob, fileName: string) {

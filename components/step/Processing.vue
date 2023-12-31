@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import JSZip from 'jszip'
 import pLimit from 'p-limit'
-import decodePNG from '@jsquash/png/decode'
 import initPNG from '@jsquash/png/codec'
 
 import bulkOperation from '~/utils/bulk/bulkOperation'
@@ -36,9 +35,12 @@ async function loadFiles() {
   console.time('loadFiles')
   const limit = pLimit(8)
   await Promise.all(props.files.map(async (file: File) => await limit(async () => {
+    if (file.name.startsWith('__MACOSX'))
+      return iterProgress() // remove macosx meta files
+
     const data = await file.arrayBuffer()
-    if (isPNG(file) && !file.name.startsWith('__MACOSX'))
-      images.value.push({ name: file.name, data: await decodePNG(data) })
+    if (isPNG(file))
+      images.value.push({ name: file.name, data: await safeDecodePNG(data) })
     else
       nonImages.value.push({ name: file.name, data })
     iterProgress()
