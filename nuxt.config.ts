@@ -3,11 +3,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/styles/layout.scss', '~/assets/styles/misc.scss', '~/assets/styles/components.scss'],
 
-  build: { transpile: ['@jsquash/png', '@jsquash/oxipng'] },
-  vite: {
-    optimizeDeps: { exclude: ['@jsquash/png', '@jsquash/oxipng'] },
-    worker: { format: 'es' },
-  },
+  vite: { worker: { format: 'es' } },
   app: {
     head: {
       title: 'PackXBR',

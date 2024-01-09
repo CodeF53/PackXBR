@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import JSZip from 'jszip'
 import pLimit from 'p-limit'
-import initPNG from '@jsquash/png/codec'
+import { init as initDecoder } from '@jsquash/png/decode'
 
 import bulkOperation from '~/utils/bulk/bulkOperation'
 import OptimizeWorker from '~/utils/bulk/optimize.worker?worker'
@@ -29,7 +29,7 @@ async function loadFiles() {
   progress.value = 0
   progressMax.value = props.files.length
 
-  await initPNG()
+  await initDecoder()
 
   // load every file's arrayBuffer asynchronously
   console.time('loadFiles')
