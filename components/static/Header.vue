@@ -1,7 +1,7 @@
 <template>
   <header class="col centerChildren">
     <h1>
-      Pack XBR
+      PackXBR
     </h1>
     <h2>
       Bulk Pixel Art Upscaler

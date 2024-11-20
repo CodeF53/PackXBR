@@ -70,6 +70,9 @@ defineProps(['class'])
   // ^ added by misterk7_-. todo: disable when logo isn't interactable.
   margin-bottom: 1rem;
 
+  // imply interactivity through cursor when acting as an input
+  &.interactive { cursor: pointer; }
+
   // prevent seams when moving by adding a thin outline
   path {
     stroke-linecap: round;

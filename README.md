@@ -40,4 +40,4 @@ Heres the logic Auto mode uses:
 While this logic leads to a half-decent result, it's not perfect. So if you have the time, I highly recommend using manual.
 
 ## Misc
-If you have any questions or suggestions, please contact me via the [the VanillaXBR Discord server](https://discord.com/invite/8N4xzej)!
+If you have any questions or suggestions, please contact me via [the VanillaXBR Discord server](https://discord.com/invite/8N4xzej)!

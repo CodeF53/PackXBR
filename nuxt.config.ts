@@ -1,19 +1,9 @@
-import replaceWorkerImportMetaUrl from 'rollup-plugin-replace-worker-import-meta-url'
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/styles/layout.scss', '~/assets/styles/misc.scss', '~/assets/styles/components.scss'],
 
-  build: { transpile: ['@jsquash/png', '@jsquash/oxipng'] },
-  vite: {
-    optimizeDeps: { exclude: ['@jsquash/png', '@jsquash/oxipng'] },
-    plugins: [replaceWorkerImportMetaUrl()],
-    worker: {
-      plugins: [replaceWorkerImportMetaUrl()],
-      format: 'es',
-    },
-  },
+  vite: { worker: { format: 'es' } },
   app: {
     head: {
       title: 'PackXBR',
@@ -31,7 +21,7 @@ export default defineNuxtConfig({
         // twitter stuff
         { property: 'og:title', content: 'PackXBR' },
         { property: 'og:description', content: 'Bulk Pixel Art Upscaler' },
-        { property: 'og:image', content: 'https://cdn.discordapp.com/attachments/821448645693276230/1144367698181099520/android-chrome-512x512.png' },
+        { property: 'og:image', content: '/android-chrome-512x512.png' },
         { name: 'twitter:card', content: 'summary' },
         { name: 'twitter:site', content: '@CodeF53' },
         { name: 'twitter:creator', content: '@CodeF53' },

@@ -18,7 +18,7 @@ defineEmits(['update:modelValue', 'change'])
       :value="modelValue"
       :checked="modelValue"
       :type="type"
-      @input="$emit('update:modelValue', type === 'checkbox' ? $event.target.checked : $event.target.value)"
+      @input="$emit('update:modelValue', type === 'checkbox' ? $event.target!.checked : $event.target!.value)"
       @change="$emit('change', $event)"
     >
   </div>

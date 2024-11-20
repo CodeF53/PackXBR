@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import JSZip from 'jszip'
 import pLimit from 'p-limit'
-import decodePNG from '@jsquash/png/decode'
-import initPNG from '@jsquash/png/codec'
+import { init as initDecoder } from '@jsquash/png/decode'
 
 import bulkOperation from '~/utils/bulk/bulkOperation'
 import OptimizeWorker from '~/utils/bulk/optimize.worker?worker'
@@ -30,15 +29,18 @@ async function loadFiles() {
   progress.value = 0
   progressMax.value = props.files.length
 
-  await initPNG()
+  await initDecoder()
 
   // load every file's arrayBuffer asynchronously
   console.time('loadFiles')
   const limit = pLimit(8)
   await Promise.all(props.files.map(async (file: File) => await limit(async () => {
+    if (file.name.startsWith('__MACOSX'))
+      return iterProgress() // remove macosx meta files
+
     const data = await file.arrayBuffer()
     if (isPNG(file))
-      images.value.push({ name: file.name, data: await decodePNG(data) })
+      images.value.push({ name: file.name, data: await safeDecodePNG(data) })
     else
       nonImages.value.push({ name: file.name, data })
     iterProgress()
@@ -58,7 +60,7 @@ async function processImages() {
   // (if auto) process all images
   if (props.options.auto) {
     console.time('Process')
-    processedImages.value = await bulkOperation(toRaw(images.value), ProcessWorker, props.options.threads, iterProgress, props.options.scale)
+    processedImages.value = (await bulkOperation(toRaw(images.value), ProcessWorker, props.options.threads, iterProgress, props.options.scale)) as Image[]
     console.timeEnd('Process')
 
     // move to next step
@@ -103,7 +105,7 @@ async function optimizeImages() {
     results = await bulkOperation(toRaw(processedImages.value), EncodeWorker, props.options.threads, iterProgress)
     console.timeEnd('Encode')
   }
-  optimizedImages.value = results
+  optimizedImages.value = results as DumbFile[]
 
   // move to next step
   saveResult()

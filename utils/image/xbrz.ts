@@ -1,4 +1,4 @@
-let instance
+let instance: WebAssembly.Instance
 
 const ColorFormat = {
   RGB: 0,

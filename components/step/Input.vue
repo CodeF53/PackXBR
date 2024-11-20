@@ -90,7 +90,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="col gap2 centerChildren">
-    <StaticLogo :class="{ showBox: hasFiles, activeSelect }" @click="$refs.input.click()" />
+    <StaticLogo class="interactive" :class="{ showBox: hasFiles, activeSelect }" @click="$refs.input.click()" />
     <input
       ref="input" type="file" accept=".zip,.png" multiple
       @change="handleFileInput"
