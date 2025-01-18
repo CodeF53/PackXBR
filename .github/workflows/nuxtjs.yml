@@ -53,7 +53,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nuxt-build-
       - name: Install dependencies
-        run: bun install # --frozen-lockfile
+        run: bun install --frozen-lockfile
       - name: Static HTML export with Nuxt
         run: bun generate
       - name: Upload artifact
