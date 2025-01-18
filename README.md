@@ -32,7 +32,7 @@ Because the tool has no idea what each image given to it is, the best it can do 
 
 Heres the logic Auto mode uses:
 1. By default, all images have relayer off and use void for all their edges.
-2. Inside `block/`, all edges are treated with wrap
+2. Inside `block/` and `optifine/`, all edges are treated with wrap
 3. Inside `model/` and `entity/`, relayer is used
 4. Inside `painting/`, all edges are treated with extend
 5. Inside `font/` and `colormap/`, images aren't scaled at all

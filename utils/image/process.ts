@@ -14,7 +14,7 @@ function getSettings(fileName: string): ProcessSettings {
   const path = fileName.toLowerCase()
   if (path.includes('/block/'))
     settings.tile = { n: 'wrap', s: 'wrap', e: 'wrap', w: 'wrap' }
-  else if (path.includes('/painting/'))
+  else if (path.includes('/painting/') || path.includes('/optifine/'))
     settings.tile = { n: 'wrap', s: 'wrap', e: 'wrap', w: 'wrap' }
   else if (includesAny(path, '/model/', '/entity/'))
     settings.relayer = true
