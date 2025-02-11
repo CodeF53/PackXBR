@@ -1,4 +1,5 @@
 import { endsWithAny, includesAny } from '../misc'
+import { createOffscreenContext } from './canvas'
 import { containsTranslucent, crop, cullTranslucent, relayer } from './miscProcess'
 import { tile } from './tile'
 import { xbrz } from './xbrz'
@@ -25,6 +26,9 @@ function getSettings(fileName: string): ProcessSettings {
 }
 
 export function processAuto(image: Image, scaleFactor: number, settings?: ProcessSettings) {
+  if (image.name === 'pack.png')
+    return packPng(image.data)
+
   if (settings === undefined)
     settings = getSettings(image.name)
 
@@ -54,4 +58,19 @@ export async function process(imageData: ImageData, scaleFactor: number, setting
     relayer(processImageData, imageData, scaleFactor)
 
   return processImageData
+}
+
+async function packPng(imageData: ImageData): Promise<ImageData> {
+  const ctx = createOffscreenContext()
+  const { canvas } = ctx
+  canvas.width = 128
+  canvas.height = 128
+  ctx.putImageData(imageData, 0, 0, 0, 0, 128, 128)
+
+  const packXBRImg = new Image()
+  packXBRImg.src = 'https://cdn.discordapp.com/emojis/1267226522633109504.png?size=56'
+  await new Promise(resolve => packXBRImg.onload = resolve)
+  ctx.drawImage(packXBRImg, 72, 68)
+
+  return ctx.getImageData(0, 0, 128, 128)
 }
