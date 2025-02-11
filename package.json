@@ -31,7 +31,7 @@
     "typescript": "^4.9.5"
   },
   "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
+    "pre-commit": "bun lint-staged"
   },
   "lint-staged": {
     "*": "eslint --fix"

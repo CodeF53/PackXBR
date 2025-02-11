@@ -3,7 +3,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ['~/assets/styles/layout.scss', '~/assets/styles/misc.scss', '~/assets/styles/components.scss'],
 
-  vite: { worker: { format: 'es' } },
+  vite: {
+    css: { preprocessorOptions: { scss: { silenceDeprecations: ['mixed-decls'] } } },
+    worker: { format: 'es' },
+  },
+
   app: {
     head: {
       title: 'PackXBR',
