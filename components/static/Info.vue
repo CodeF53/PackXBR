@@ -26,18 +26,6 @@
         and ask in <code>#packxbr-discussion</code>
       </span>
     </p>
-    <details>
-      <summary>TODO:</summary>
-      <ul class="col">
-        <li title="instead of waiting until all images have been done in manual mode before optimizing, we could optimize images as they are completed. This is difficult as it could introduce a lot of race conditions">
-          Optimize while in manual mode (very hard)
-        </li>
-        <li>Upload icon in logo during input step</li>
-        <li>Bigger & cooler button layouts</li>
-        <li>File-input errors</li>
-        <li>Progressbar during file-input stage</li>
-      </ul>
-    </details>
     <p id="legal">
       If you did not create or do not own the textures you put into PackXBR, you do not own the textures that PackXBR turns them into.
       Your permission to release or distribute textures made with PackXBR is at the discretion of the creator of the original textures.
