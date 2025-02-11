@@ -6,7 +6,7 @@ const options = ref({
   scale: 4,
   auto: true,
   threads: 1, // updated to navigator.hardwareConcurrency - 2 inside StepOptions
-  optimize: true,
+  optimize: false,
   outputName: 'images',
 })
 
