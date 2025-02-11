@@ -106,6 +106,8 @@ onBeforeUnmount(() => {
       Next
     </button>
   </div>
+
+  <StaticInfo />
 </template>
 
 <style lang="scss" scoped>

@@ -48,8 +48,6 @@ function next() {
 
     <div class="spacer" />
 
-    <StaticInfo />
-
     <StaticBackground />
     <UtilErrors />
   </div>

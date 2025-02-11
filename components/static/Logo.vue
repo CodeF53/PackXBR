@@ -64,8 +64,8 @@ defineProps(['class'])
 
 <style lang="scss">
 #logo {
-  width: 22rem;
-  height: 22rem;
+  width: 20rem;
+  height: 20rem;
   margin-bottom: 1rem;
 
   // imply interactivity through cursor when acting as an input
