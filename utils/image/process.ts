@@ -12,10 +12,10 @@ function getSettings(fileName: string): ProcessSettings {
   }
 
   const path = fileName.toLowerCase()
-  if (path.includes('/block/'))
+  if (path.includes('/block/') || path.includes('/optifine/'))
     settings.tile = { n: 'wrap', s: 'wrap', e: 'wrap', w: 'wrap' }
-  else if (path.includes('/painting/') || path.includes('/optifine/'))
-    settings.tile = { n: 'wrap', s: 'wrap', e: 'wrap', w: 'wrap' }
+  else if (path.includes('/painting/'))
+    settings.tile = { n: 'extend', s: 'extend', e: 'extend', w: 'extend' }
   else if (includesAny(path, '/model/', '/entity/'))
     settings.relayer = true
   else if (includesAny(path, '/font/', '/colormap/') || endsWithAny(path, 'pack.png', 'title/minecraft.png'))
