@@ -2,18 +2,11 @@
   <!-- "main" because it contains text that we want to be seen by SEO algorithms -->
   <main class="col centerChildren gap1">
     <h3>About</h3>
-    <p class="col gap1">
+    <p class="col">
       <span>
-        A utility for upscaling pixel-art images using the xBR algorithm
-      </span>
-      <span>
-        Upscales images using the
+        A utility for upscaling pixel-art images using the
         <a href="https://sourceforge.net/projects/xbrz/">xBRZ</a>
-        scaling algorithm.
-      </span>
-      <span>
-        Losslessly optimizes the outputted images using
-        <a href="https://github.com/shssoichiro/oxipng">OxiPNG</a>.
+        algorithm
       </span>
       <span>
         Designed for development of Minecraft resource packs in the
@@ -37,6 +30,7 @@
 <style lang="scss">
 main {
   > #legal {
+    text-align: center;
     font-size: .65rem;
     line-height: .65rem;
     color: rgba(255, 255, 255, 0.25);
