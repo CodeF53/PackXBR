@@ -11,8 +11,10 @@ export function containsTranslucent(imageData: ImageData): boolean {
 // ! in-place (modifies the passed variable)
 export function cullTranslucent(imageData: ImageData): void {
   for (let index = 3; index < imageData.data.length; index += 4) {
-    if (imageData.data[index] < 255)
+    if (imageData.data[index] < 191)
       imageData.data[index] = 0
+    else
+      imageData.data[index] = 255
   }
 }
 
