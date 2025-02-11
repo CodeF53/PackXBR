@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import JSZip from 'jszip'
 
 defineProps(['files'])
@@ -7,6 +7,8 @@ const emit = defineEmits(['update:files', 'update:outputName', 'next'])
 const activeSelect = ref(false)
 const selectedText = ref('No files selected')
 const hasFiles = ref(false)
+
+const error: Ref<string | undefined> = ref()
 
 async function handleFiles(fileList) {
   // if there are any zip files, select the first one to process
@@ -32,9 +34,11 @@ async function handleFiles(fileList) {
   const images = files.filter(isPNG)
   // verify we have atleast one image
   if (images.length < 1) {
+    error.value = 'No files found in input! Only .zips, .png, and clipboard contents are supported'
     console.error('File selected, but no images found! Did the user select a zip that doesn\'t contain any .pngs?')
     return
   }
+  error.value = undefined
   // update selectedText
   hasFiles.value = true
   selectedText.value = `${images.length} image(s)`
@@ -96,6 +100,7 @@ onBeforeUnmount(() => {
       @change="handleFileInput"
       @input="activeSelect = false" @click="activeSelect = true" @cancel="activeSelect = false"
     >
+    <span v-if="error" class="error">{{ error }}</span>
     <span>{{ selectedText }}</span>
     <button :class="{ hidden: !hasFiles }" @click="$emit('next')">
       Next
@@ -103,8 +108,11 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 input[type="file"] {
   display: none;
+}
+.error {
+  color: red;
 }
 </style>
