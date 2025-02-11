@@ -6,7 +6,10 @@ import { safeEncodePNG, workerError } from '~/utils/misc'
 Promise.all([initOxiPNG(), initEncode()]).then(() => {
   // when everything is ready, tell main thread we are initialized
   globalThis.postMessage({})
-}).catch(console.error)
+}).catch(() => {
+  // allow fallback decoding when failing to init wasm encoders
+  globalThis.postMessage({})
+})
 
 // on message, process data
 globalThis.onmessage = async (event) => {

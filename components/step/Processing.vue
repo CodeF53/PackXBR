@@ -30,6 +30,7 @@ async function loadFiles() {
   progressMax.value = props.files.length
 
   await initDecoder()
+    .catch(() => console.error('failed to init fast PNG decoder, may take awhile to load files'))
 
   // load every file's arrayBuffer asynchronously
   console.time('loadFiles')
