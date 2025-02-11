@@ -67,9 +67,8 @@ async function packPng(imageData: ImageData): Promise<ImageData> {
   canvas.height = 128
   ctx.putImageData(imageData, 0, 0, 0, 0, 128, 128)
 
-  const packXBRImg = new Image()
-  packXBRImg.src = 'https://cdn.discordapp.com/emojis/1267226522633109504.png?size=56'
-  await new Promise(resolve => packXBRImg.onload = resolve)
+  const packXBRImg = await fetch('https://cdn.discordapp.com/emojis/1267226522633109504.png?size=56')
+    .then(r => r.blob()).then(createImageBitmap)
   ctx.drawImage(packXBRImg, 72, 68)
 
   return ctx.getImageData(0, 0, 128, 128)
