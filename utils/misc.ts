@@ -60,11 +60,3 @@ export function saveBlob(blob: Blob, fileName: string) {
   // Clean up by revoking the URL object
   URL.revokeObjectURL(url)
 }
-
-export function includesAny(str: string, ...substrings: string[]): boolean {
-  return substrings.some(substring => str.includes(substring))
-}
-
-export function endsWithAny(str: string, ...substrings: string[]): boolean {
-  return substrings.some(substring => str.endsWith(substring))
-}
