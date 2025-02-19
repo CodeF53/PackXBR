@@ -18,9 +18,10 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/site.webmanifest' },
       ],
       meta: [
+        { name: 'darkreader-lock' },
         { name: 'description', content: 'Bulk Pixel Art Upscaler' },
         { name: 'keywords', content: 'xBR, xBRZ, pixel art, upscaler, bulk' },
-        { name: 'author', content: 'F53' },
+        { name: 'author', content: 'Cassie' },
         { name: 'theme-color', content: '#4b0000' },
         // twitter stuff
         { property: 'og:title', content: 'PackXBR' },
