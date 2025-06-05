@@ -16,6 +16,7 @@ const stage = ref('')
 const indeterminateProgress: Ref<boolean> = ref(false)
 const progress: Ref<number> = ref(0)
 const progressMax: Ref<number> = ref(0)
+const progressFilename_Debug: Ref<string> = ref('')
 const iterProgress = () => progress.value++
 
 const nonImages: Ref<Array<DumbFile>> = ref([])
@@ -40,6 +41,7 @@ async function loadFiles() {
       return iterProgress() // remove macosx meta files
 
     const data = await file.arrayBuffer()
+    progressFilename_Debug.value = file.name
     if (isPNG(file))
       images.value.push({ name: file.name, data: await safeDecodePNG(data) })
     else
@@ -171,6 +173,7 @@ onMounted(loadFiles)
       <template v-else>
         <progress :value="progress" :max="progressMax" />
         <span>{{ progress }} / {{ progressMax }}</span>
+        <span>File: {{ progressFilename_Debug }}</span>
       </template>
     </div>
   </template>
