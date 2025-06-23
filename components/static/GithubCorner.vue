@@ -1,6 +1,6 @@
 <!-- https://github.com/tholman/github-corners -->
 <template>
-  <a href="https://github.com/CodeF53/WebPackXBR" class="github-corner" aria-label="View source on GitHub">
+  <a href="https://github.com/CodeF53/PackXBR" class="github-corner" aria-label="View source on GitHub">
     <svg
       width="80" height="80" viewBox="0 0 250 250" style="position: absolute; top: 0; border: 0; right: 0;"
       aria-hidden="true"
