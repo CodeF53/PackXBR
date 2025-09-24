@@ -1,10 +1,10 @@
 <template>
   <header class="col centerChildren">
-    <h1>
+    <h1 class="packLogo" title="PackXBR">
       PackXBR
     </h1>
     <h2>
-      Bulk Pixel Art Upscaler
+      - bulk pixel art upscaler -
     </h2>
     <StaticGithubCorner />
   </header>
