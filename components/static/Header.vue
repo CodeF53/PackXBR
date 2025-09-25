@@ -33,7 +33,7 @@
     .packLogo:after {
       content: attr(title);
       position: absolute;
-      -webkit-text-stroke: 0.20em rgb(127, 12, 32);
+      -webkit-text-stroke: 0.19em rgb(153, 0, 0);
       left: 0;
       z-index: -2;
     }
